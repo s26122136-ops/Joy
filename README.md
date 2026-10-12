@@ -392,15 +392,14 @@
                 <div class="card-title">Week 2 - 今天吃甚麼?</div>
             </a>
 
-           <!-- Week 3 (已解鎖) -->
+            <!-- Week 3 (已解鎖) -->
             <a href="w3/index.html" class="card unlocked">
                 <div class="card-header">
                     <span class="week-tag">Week 03</span>
                     <span class="card-arrow">→</span>
                 </div>
-                <div class="card-title">Week 3 - 迷因產生器?</div>
+                <div class="card-title">Week 2 - 今天吃甚麼?</div>
             </a>
-
             <div class="card locked">
                 <div class="card-header">
                     <span class="week-tag">Week 04</span>
