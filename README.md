@@ -391,8 +391,7 @@
                 </div>
                 <div class="card-title">Week 2 - 今天吃甚麼?</div>
             </a>
-
-            <!-- Week 3 (已解鎖) -->
+             <!-- Week 3 (已解鎖) -->
             <a href="w3/index.html" class="card unlocked">
                 <div class="card-header">
                     <span class="week-tag">Week 03</span>
