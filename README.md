@@ -404,14 +404,13 @@
                     <span class="week-tag">Week 04</span>
                     <span class="status-badge lock-icon">🔒</span>
                 </div>
-                <div class="card-title">Week 4 - 尚未解鎖</div>
-            </div>
-
-            <div class="card locked">
-                <div class="card-header">
-                    <span class="week-tag">Week 05</span>
-                    <span class="status-badge lock-icon">🔒</span>
-                </div>
+               <div class="card">
+    <div class="card-header">
+        <span class="week-tag">Week 04</span>
+        <span class="status-badge unlock-icon">🔓</span>
+    </div>
+    <div class="card-title">Week 4 - 講八卦</div>
+ </div>
                 <div class="card-title">Week 5 - 尚未解鎖</div>
             </div>
 
