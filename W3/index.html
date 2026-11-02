@@ -1,416 +1,873 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🤪 搞怪迷因產生器 (Meme Generator)</title>
-  
-  <!-- 引入 Google Fonts 粗體可愛與中文字體 -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🤪 爆笑迷因產生器 Meme Generator Pro</title>
+
+  <!-- Google Fonts: Bungee (搞笑標題), Impact/Noto Sans TC (迷因文字) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@600;700&family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Noto+Sans+TC:wght@700;900&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- html2canvas CDN：用來將 HTML 畫面轉換成圖片下載 -->
+
+  <!-- html2canvas CDN for capturing meme canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            bungee: ['Bungee', 'cursive'],
+            fredoka: ['Fredoka', 'sans-serif'],
+            meme: ['Impact', 'Noto Sans TC', 'sans-serif'],
+          },
+          colors: {
+            memeYellow: '#FFE600',
+            memePink: '#FF2A85',
+            memePurple: '#7C3AED',
+            memeGreen: '#10B981',
+            memeDark: '#120E24',
+          },
+          boxShadow: {
+            'pop': '4px 4px 0px #000000',
+            'pop-lg': '6px 6px 0px #000000',
+            'pop-xl': '8px 8px 0px #000000',
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    /* 設定全域字型 */
     body {
-      font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
-      background-color: #fef08a; /* 活力亮黃色背景 */
-      background-image: radial-gradient(#facc15 2px, transparent 2px);
-      background-size: 24px 24px;
+      background-color: #120E24;
+      background-image: 
+        radial-gradient(#FF2A85 1.5px, transparent 1.5px), 
+        radial-gradient(#FFE600 1.5px, #120E24 1.5px);
+      background-size: 60px 60px;
+      background-position: 0 0, 30px 30px;
     }
 
-    /* 迷因專用文字樣式 (經典 Impact 大粗體與強烈陰影) */
-    .meme-text {
-      font-family: 'Impact', 'Bungee', 'Noto Sans TC', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      line-height: 1.1;
-      /* 重度黑色文字外框與陰影，確保在任何底圖上都清晰 */
-      text-shadow: 
-        3px 3px 0 #000, -3px -3px 0 #000, 
-        3px -3px 0 #000, -3px 3px 0 #000,
-        0 4px 0 #000, 0 -4px 0 #000, 
-        4px 0 0 #000, -4px 0 0 #000,
-        0 0 10px rgba(0,0,0,0.8);
-      word-break: break-word;
-      user-select: none;
-    }
-
-    /* 搞笑風格的新波普/新蠻荒風格 (Neo-Brutalism) 邊框與陰影 */
-    .funky-card {
-      background: #ffffff;
-      border: 4px solid #000000;
-      box-shadow: 8px 8px 0px #000000;
-      border-radius: 16px;
-    }
-
-    .funky-btn {
+    /* Comic Book Pop Button Style */
+    .btn-pop {
+      transition: all 0.15s ease-in-out;
       border: 3px solid #000000;
       box-shadow: 4px 4px 0px #000000;
-      transition: all 0.15s ease-in-out;
-      font-weight: 700;
     }
-
-    .funky-btn:hover {
+    .btn-pop:hover {
       transform: translate(-2px, -2px);
       box-shadow: 6px 6px 0px #000000;
     }
-
-    .funky-btn:active {
+    .btn-pop:active {
       transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px #000000;
+      box-shadow: 1px 1px 0px #000000;
     }
 
-    /* 搞笑扭動特效 */
-    @keyframes wiggle {
-      0%, 100% { transform: rotate(-2deg); }
-      50% { transform: rotate(2deg); }
+    /* Custom range slider with fun playful colors */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #2D2450;
+      border: 2px solid #000;
+      border-radius: 999px;
+      height: 12px;
     }
-    .hover-wiggle:hover {
-      animation: wiggle 0.3s infinite ease-in-out;
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      background: #FFE600;
+      border: 2px solid #000;
+      cursor: pointer;
+      box-shadow: 2px 2px 0px #000;
     }
 
-    /* 自訂滑桿樣式 */
-    input[type="range"] {
-      accent-color: #ff0055;
+    /* Strong Meme Text Style */
+    .meme-text-render {
+      font-family: 'Impact', 'Noto Sans TC', sans-serif;
+      font-weight: 900;
+      text-shadow: 
+        3px 3px 0 #000, -3px -3px 0 #000,
+        3px -3px 0 #000, -3px 3px 0 #000,
+        0px 3px 0 #000, 3px 0px 0 #000,
+        0px -3px 0 #000, -3px 0px 0 #000,
+        4px 4px 8px rgba(0,0,0,0.8);
+      user-select: none;
+      line-height: 1.1;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e1738;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #FF2A85;
+      border-radius: 4px;
+      border: 2px solid #000;
     }
   </style>
 </head>
-<body class="min-h-screen p-4 md:p-8 text-slate-900">
 
-  <!-- 頁面標題區 -->
-  <header class="max-w-6xl mx-auto mb-8 text-center">
-    <div class="inline-block bg-pink-500 text-white px-6 py-2 border-4 border-black rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] -rotate-1 hover-wiggle">
-      <h1 class="text-3xl md:text-5xl font-extrabold tracking-wider flex items-center gap-2">
-        <span>🤪</span> 迷因發射器 Meme Studio <span>🔥</span>
-      </h1>
+<body class="text-white font-fredoka min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- Header Navbar -->
+  <header class="w-full bg-memeYellow border-b-4 border-black px-4 py-3 sm:px-8 z-40 sticky top-0 shadow-lg">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-memePink border-2 border-black rounded-full flex items-center justify-center font-bungee text-2xl text-memeYellow shadow-pop">
+          🤪
+        </div>
+        <div>
+          <h1 class="font-bungee text-2xl sm:text-3xl text-black tracking-wider leading-none">
+            MEME GENERATOR
+          </h1>
+          <p class="text-xs text-slate-900 font-bold hidden sm:block">💥 梗圖迷因大師 - 搞怪無極限</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="btn-random-text" class="btn-pop bg-memePink text-white text-xs sm:text-sm font-bold px-3 py-2 rounded-xl flex items-center gap-1.5">
+          <i data-lucide="shuffle" class="w-4 h-4"></i>
+          <span>隨機爆笑語</span>
+        </button>
+        <button id="btn-reset-all" class="btn-pop bg-white text-black text-xs sm:text-sm font-bold px-3 py-2 rounded-xl flex items-center gap-1.5">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">重設</span>
+        </button>
+      </div>
     </div>
-    <p class="mt-3 text-lg font-bold text-slate-800 bg-white/80 inline-block px-4 py-1 rounded-full border-2 border-black">
-      上傳梗圖 ➔ 加上靈魂文字 ➔ 一鍵生成荒謬迷因！
-    </p>
   </header>
 
-  <!-- 主內容區域 (RWD 響應式：電腦左右分欄，手機上下排列) -->
-  <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-    
-    <!-- 左側：控制面板區 (佔 5 欄) -->
-    <section class="lg:col-span-5 funky-card p-6 space-y-6">
-      <h2 class="text-2xl font-black border-b-4 border-black pb-2 flex items-center gap-2">
-        🛠️ 迷因控制台
-      </h2>
+  <!-- Main Grid Layout -->
+  <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-      <!-- 1. 圖片上傳區 -->
-      <div class="space-y-2">
-        <label class="block font-black text-slate-800">1. 選擇底圖 (本機上傳)</label>
-        <div class="relative">
-          <input type="file" id="imageInput" accept="image/*" class="hidden" />
-          <button onclick="document.getElementById('imageInput').click()" 
-                  class="w-full py-3 px-4 bg-cyan-300 hover:bg-cyan-400 text-black funky-btn rounded-xl flex items-center justify-center gap-2 text-base">
-            <span>📁 上傳你的梗圖照片</span>
-          </button>
-        </div>
+    <!-- LEFT / PREVIEW CONTAINER (col-span-7) -->
+    <section class="lg:col-span-7 flex flex-col items-center justify-center gap-4 lg:sticky lg:top-24">
+      
+      <!-- Stage Wrapper -->
+      <div class="w-full bg-slate-900/90 border-4 border-black rounded-3xl p-4 sm:p-6 shadow-pop-xl relative flex flex-col items-center justify-center overflow-hidden">
         
-        <!-- 預設快捷梗圖 -->
-        <div class="pt-2">
-          <span class="text-xs font-bold text-slate-600 block mb-1">或是快速試用預設底圖：</span>
-          <div class="flex gap-2">
-            <button onclick="loadPresetImage('doge')" class="text-xs bg-amber-200 hover:bg-amber-300 px-2 py-1 rounded-lg border-2 border-black font-bold">🐕 柴犬梗</button>
-            <button onclick="loadPresetImage('cat')" class="text-xs bg-orange-200 hover:bg-orange-300 px-2 py-1 rounded-lg border-2 border-black font-bold">🙀 震驚貓</button>
-            <button onclick="loadPresetImage('success')" class="text-xs bg-emerald-200 hover:bg-emerald-300 px-2 py-1 rounded-lg border-2 border-black font-bold">👶 成功男孩</button>
-          </div>
+        <!-- Drag & Drop Zone Overlay -->
+        <div id="drop-overlay" class="absolute inset-0 bg-memePurple/80 border-4 border-dashed border-memeYellow z-50 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-200">
+          <div class="text-6xl animate-bounce mb-2">📸</div>
+          <p class="text-memeYellow font-bungee text-xl">放開滑鼠以換上這張搞笑圖！</p>
+        </div>
+
+        <!-- Canvas Frame -->
+        <div id="meme-stage-container" class="relative max-w-full max-h-[60vh] flex items-center justify-center bg-black border-4 border-black rounded-2xl overflow-hidden shadow-2xl">
+          <!-- Main Meme Image -->
+          <img id="meme-image" src="" alt="Meme Background" class="max-w-full max-h-[55vh] object-contain block select-none" />
+          
+          <!-- Interactive Dynamic Text Layer -->
+          <div id="text-overlay-layer" class="absolute inset-0 pointer-events-auto"></div>
+        </div>
+
+        <!-- Quick Interaction Hint -->
+        <div class="mt-4 flex items-center gap-2 text-xs text-memeYellow bg-black/60 px-4 py-1.5 rounded-full border-2 border-black font-bold">
+          <i data-lucide="hand" class="w-4 h-4 text-memePink animate-pulse"></i>
+          <span>小提示：可以直接用滑鼠/手指拖拽圖片上的文字位置哦！</span>
         </div>
       </div>
 
-      <!-- 2. 文字輸入區 -->
-      <div class="space-y-4 pt-2 border-t-2 border-slate-200">
-        <label class="block font-black text-slate-800">2. 輸入經典迷因文字</label>
-        
-        <!-- 上方文字輸入框 -->
-        <div>
-          <span class="text-xs font-bold text-slate-500">上方文字 (Top Text)</span>
-          <input type="text" id="topTextInput" value="當你寫的 Code" 
-                 placeholder="輸入上方文字..." 
-                 class="w-full mt-1 p-3 border-3 border-black rounded-xl font-bold focus:outline-none focus:ring-4 focus:ring-yellow-300 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-        </div>
-
-        <!-- 下方文字輸入框 -->
-        <div>
-          <span class="text-xs font-bold text-slate-500">下方文字 (Bottom Text)</span>
-          <input type="text" id="bottomTextInput" value="一次就通過測試時" 
-                 placeholder="輸入下方文字..." 
-                 class="w-full mt-1 p-3 border-3 border-black rounded-xl font-bold focus:outline-none focus:ring-4 focus:ring-yellow-300 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-        </div>
-      </div>
-
-      <!-- 3. 滑桿微調區 -->
-      <div class="space-y-4 pt-2 border-t-2 border-slate-200">
-        <label class="block font-black text-slate-800">3. 樣式與位置微調</label>
-
-        <!-- 字體大小滑桿 -->
-        <div>
-          <div class="flex justify-between text-sm font-bold">
-            <span>🔤 字體大小</span>
-            <span id="fontSizeVal" class="text-pink-600">36px</span>
-          </div>
-          <input type="range" id="fontSizeSlider" min="20" max="80" value="36" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- 上方文字位置滑桿 -->
-        <div>
-          <div class="flex justify-between text-sm font-bold">
-            <span>⬆️ 上方文字高度 (Top Offset)</span>
-            <span id="topPosVal" class="text-pink-600">5%</span>
-          </div>
-          <input type="range" id="topPosSlider" min="0" max="40" value="5" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- 下方文字位置滑桿 -->
-        <div>
-          <div class="flex justify-between text-sm font-bold">
-            <span>⬇️ 下方文字高度 (Bottom Offset)</span>
-            <span id="bottomPosVal" class="text-pink-600">5%</span>
-          </div>
-          <input type="range" id="bottomPosSlider" min="0" max="40" value="5" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- 文字顏色與樣式選項 -->
-        <div class="flex items-center gap-4 pt-2">
-          <div class="flex items-center gap-2">
-            <label for="textColorPicker" class="text-sm font-bold">🎨 文字顏色：</label>
-            <input type="color" id="textColorPicker" value="#ffffff" class="w-9 h-9 border-2 border-black rounded-lg cursor-pointer">
-          </div>
-        </div>
-      </div>
-
-      <!-- 4. 一鍵下載與重置按鈕 -->
-      <div class="pt-4 border-t-4 border-black space-y-3">
-        <button id="downloadBtn" class="w-full py-4 bg-emerald-400 hover:bg-emerald-300 text-black text-xl funky-btn rounded-xl flex items-center justify-center gap-2 hover-wiggle">
-          <span>🚀 一鍵打包下載迷因 (my-meme.png)</span>
+      <!-- Export Buttons -->
+      <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <button id="btn-copy-image" class="btn-pop bg-memePurple hover:bg-purple-600 text-white py-3 px-4 rounded-2xl font-bungee text-lg flex items-center justify-center gap-2">
+          <i data-lucide="copy" class="w-5 h-5"></i>
+          <span>複製到剪貼簿</span>
         </button>
-        
-        <button id="resetBtn" class="w-full py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 text-sm font-bold rounded-lg border-2 border-black">
-          🔄 重置為預設設定
+        <button id="btn-download-image" class="btn-pop bg-memeGreen hover:bg-emerald-500 text-black py-3 px-4 rounded-2xl font-bungee text-lg flex items-center justify-center gap-2">
+          <i data-lucide="download" class="w-5 h-5"></i>
+          <span>下載梗圖 (PNG)</span>
         </button>
       </div>
+
     </section>
 
-    <!-- 右側：迷因即時預覽區 (佔 7 欄) -->
-    <section class="lg:col-span-7 flex flex-col items-center">
-      <div class="w-full funky-card p-4 md:p-6 bg-slate-900 text-white">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-black text-yellow-400 flex items-center gap-2">
-            <span>👁️</span> 即時預覽畫布 (Live Preview)
+    <!-- RIGHT / CONTROLS PANEL (col-span-5) -->
+    <section class="lg:col-span-5 flex flex-col gap-6 w-full">
+      
+      <!-- Box 1: Image Source -->
+      <div class="bg-slate-900 border-4 border-black rounded-3xl p-5 shadow-pop flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <h2 class="font-bungee text-lg text-memeYellow flex items-center gap-2">
+            <span>🖼️</span> 選擇梗圖底圖
           </h2>
-          <span class="text-xs bg-pink-600 text-white px-2 py-1 rounded border border-white font-mono">HTML2Canvas Ready</span>
         </div>
 
-        <!-- 迷因容器 (這一部份會被 html2canvas 截圖轉為 PNG) -->
-        <div class="flex justify-center items-center overflow-hidden bg-black rounded-lg border-4 border-black">
-          <div id="memeContainer" class="relative inline-block max-w-full overflow-hidden select-none bg-slate-800">
-            
-            <!-- 底圖影像 -->
-            <img id="memeImage" 
-                 src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800&auto=format&fit=crop&q=80" 
-                 alt="Meme Canvas" 
-                 class="block max-h-[550px] w-auto object-contain mx-auto pointer-events-none" 
-                 crossorigin="anonymous">
+        <!-- Local Upload Dropzone -->
+        <label for="image-upload-input" class="btn-pop bg-slate-800 hover:bg-slate-700 border-2 border-black rounded-2xl p-4 cursor-pointer flex items-center justify-center gap-3 transition-colors">
+          <input type="file" id="image-upload-input" accept="image/*" class="hidden" />
+          <div class="w-10 h-10 bg-memePink border-2 border-black rounded-xl flex items-center justify-center text-white font-bold text-xl">
+            📁
+          </div>
+          <div class="text-left">
+            <p class="font-bold text-sm text-white">上傳電腦/手機裡的圖片</p>
+            <p class="text-xs text-slate-400">避開 CORS 錯誤，100% 本機讀取</p>
+          </div>
+        </label>
 
-            <!-- 上方文字 Overlay -->
-            <div id="topTextDisplay" 
-                 class="meme-text absolute left-0 right-0 text-center px-4 leading-tight text-white pointer-events-none uppercase">
-              當你寫的 CODE
-            </div>
-
-            <!-- 下方文字 Overlay -->
-            <div id="bottomTextDisplay" 
-                 class="meme-text absolute left-0 right-0 text-center px-4 leading-tight text-white pointer-events-none uppercase">
-              一次就通過測試時
-            </div>
-            
+        <!-- Dynamic Generated Preset Meme Selection -->
+        <div>
+          <p class="text-xs font-bold text-slate-300 mb-2">或選擇經典預設爆笑迷因：</p>
+          <div id="presets-grid" class="grid grid-cols-4 gap-2">
+            <!-- Rendered by JS -->
           </div>
         </div>
-
-        <!-- 下方溫馨提醒 -->
-        <p class="text-center text-xs text-slate-400 mt-4">
-          💡 提示：輸入文字或調整滑桿時，預覽畫面會即時更新！
-        </p>
       </div>
+
+      <!-- Box 2: Dynamic Text Controls -->
+      <div class="bg-slate-900 border-4 border-black rounded-3xl p-5 shadow-pop flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <h2 class="font-bungee text-lg text-memePink flex items-center gap-2">
+            <span>💬</span> 迷因文字設定
+          </h2>
+          <button id="btn-add-text" class="btn-pop bg-memeYellow text-black text-xs font-bold px-3 py-1.5 rounded-xl flex items-center gap-1">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>新增文字</span>
+          </button>
+        </div>
+
+        <!-- Text Inputs Container -->
+        <div id="text-inputs-container" class="flex flex-col gap-4 max-h-[320px] overflow-y-auto pr-1">
+          <!-- Dynamic Text Input Cards Rendered Here -->
+        </div>
+      </div>
+
+      <!-- Box 3: Filters & FX -->
+      <div class="bg-slate-900 border-4 border-black rounded-3xl p-5 shadow-pop flex flex-col gap-4">
+        <h2 class="font-bungee text-lg text-memeGreen flex items-center gap-2">
+          <span>🎛️</span> 迷因特效與濾鏡
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold">
+          <!-- Brightness -->
+          <div class="flex flex-col gap-1.5 bg-slate-800/80 p-3 rounded-2xl border-2 border-black">
+            <div class="flex justify-between text-memeYellow">
+              <label for="filter-brightness">亮度 (Brightness)</label>
+              <span id="val-brightness">100%</span>
+            </div>
+            <input type="range" id="filter-brightness" min="0" max="200" value="100">
+          </div>
+
+          <!-- Contrast -->
+          <div class="flex flex-col gap-1.5 bg-slate-800/80 p-3 rounded-2xl border-2 border-black">
+            <div class="flex justify-between text-memeYellow">
+              <label for="filter-contrast">對比 (Contrast)</label>
+              <span id="val-contrast">100%</span>
+            </div>
+            <input type="range" id="filter-contrast" min="0" max="200" value="100">
+          </div>
+
+          <!-- Saturation -->
+          <div class="flex flex-col gap-1.5 bg-slate-800/80 p-3 rounded-2xl border-2 border-black">
+            <div class="flex justify-between text-memeYellow">
+              <label for="filter-saturate">飽和度 (Saturate)</label>
+              <span id="val-saturate">100%</span>
+            </div>
+            <input type="range" id="filter-saturate" min="0" max="200" value="100">
+          </div>
+
+          <!-- Blur/Deep Fry Meme Effect -->
+          <div class="flex flex-col gap-1.5 bg-slate-800/80 p-3 rounded-2xl border-2 border-black">
+            <div class="flex justify-between text-memeYellow">
+              <label for="filter-blur">迷因模糊 (Blur)</label>
+              <span id="val-blur">0px</span>
+            </div>
+            <input type="range" id="filter-blur" min="0" max="10" value="0">
+          </div>
+        </div>
+      </div>
+
     </section>
   </main>
 
-  <!-- 頁腳 -->
-  <footer class="max-w-6xl mx-auto mt-12 text-center text-xs font-bold text-slate-700">
-    <p>Made with ❤️ by 迷因工程師 | 單頁式 Meme Generator 示範作品</p>
-  </footer>
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl bg-memeYellow text-black font-bold border-4 border-black shadow-pop-lg translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <span id="toast-icon" class="text-2xl">🎉</span>
+    <span id="toast-message" class="text-sm">通知訊息</span>
+  </div>
 
-  <!-- JavaScript 邏輯程式碼區 -->
+  <!-- JavaScript Logic -->
   <script>
-    // ==========================================
-    // 1. 取得 HTML DOM 元素 (取得頁面上的輸入框與預覽元件)
-    // ==========================================
-    const imageInput = document.getElementById('imageInput');
-    const memeImage = document.getElementById('memeImage');
-    const memeContainer = document.getElementById('memeContainer');
+    // 💥 Dynamic Pure Canvas Meme Base Generator (Zero CORS issue guaranteed!)
+    function createPresetMemeCanvas(type, textHint, bgColor, accentColor) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 600;
+      canvas.height = 600;
+      const ctx = canvas.getContext('2d');
 
-    const topTextInput = document.getElementById('topTextInput');
-    const bottomTextInput = document.getElementById('bottomTextInput');
+      // Background
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, 600, 600);
 
-    const topTextDisplay = document.getElementById('topTextDisplay');
-    const bottomTextDisplay = document.getElementById('bottomTextDisplay');
+      // Cute Graphic Pattern
+      ctx.fillStyle = accentColor;
+      for (let i = 0; i < 600; i += 40) {
+        for (let j = 0; j < 600; j += 40) {
+          if ((i + j) % 80 === 0) {
+            ctx.beginPath();
+            ctx.arc(i + 20, j + 20, 8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
 
-    const fontSizeSlider = document.getElementById('fontSizeSlider');
-    const topPosSlider = document.getElementById('topPosSlider');
-    const bottomPosSlider = document.getElementById('bottomPosSlider');
-    const textColorPicker = document.getElementById('textColorPicker');
+      // Funny Illustration Base
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(300, 300, 160, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = '#000000';
+      ctx.stroke();
 
-    const fontSizeVal = document.getElementById('fontSizeVal');
-    const topPosVal = document.getElementById('topPosVal');
-    const bottomPosVal = document.getElementById('bottomPosVal');
+      // Cartoon Face based on type
+      ctx.fillStyle = '#000000';
+      if (type === 'doge') {
+        // Doge eyes & nose
+        ctx.beginPath(); ctx.arc(240, 260, 15, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(360, 260, 15, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(300, 310, 25, 0, Math.PI * 2); ctx.fill();
+        // Big smile
+        ctx.beginPath(); ctx.arc(300, 320, 60, 0, Math.PI); ctx.stroke();
+      } else if (type === 'question') {
+        // Question Mark Guy
+        ctx.font = 'bold 120px Bungee';
+        ctx.textAlign = 'center';
+        ctx.fillText('❓', 300, 330);
+      } else if (type === 'cat') {
+        // Screaming Cat
+        ctx.beginPath(); ctx.arc(220, 270, 18, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(380, 270, 18, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FF2A85';
+        ctx.beginPath(); ctx.arc(300, 340, 45, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      } else {
+        // Chill Guy
+        ctx.font = '100px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('😎', 300, 330);
+      }
 
-    const downloadBtn = document.getElementById('downloadBtn');
-    const resetBtn = document.getElementById('resetBtn');
+      // Title Text
+      ctx.font = 'bold 36px "Noto Sans TC", sans-serif';
+      ctx.fillStyle = '#000000';
+      ctx.textAlign = 'center';
+      ctx.fillText(textHint, 300, 520);
 
-    // ==========================================
-    // 2. 本機圖片上傳處理 (使用 FileReader 避免 CORS 跨網域錯誤)
-    // ==========================================
-    imageInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      
-      // 確認使用者有選擇檔案
-      if (file) {
-        // 建立 HTML5 FileReader 物件來讀取本機檔案
-        const reader = new FileReader();
+      return canvas.toDataURL('image/png');
+    }
 
-        // 檔案讀取完成後的觸發事件
-        reader.onload = function(event) {
-          // 將讀取的 Data URL 設定為圖片 src
-          memeImage.src = event.target.result;
+    // Preset Options List
+    const PRESET_MEMES = [
+      { name: '梗圖狗狗', url: createPresetMemeCanvas('doge', '汪！這太神奇了', '#FFE600', '#FF9900') },
+      { name: '黑人問號', url: createPresetMemeCanvas('question', '蛤？你說什麼？', '#FF2A85', '#C41263') },
+      { name: '驚嚇迷因貓', url: createPresetMemeCanvas('cat', '阿啊啊啊啊！', '#10B981', '#047857') },
+      { name: '酷哥😎', url: createPresetMemeCanvas('cool', '穩住，問題不大', '#7C3AED', '#5B21B6') },
+    ];
+
+    // Popular Taiwan Meme Quotes for Random Generator
+    const POPULAR_MEME_QUOTES = [
+      { top: '當你以為程式一次過', bottom: '結果是忘記呼叫 Function' },
+      { top: '老闆說這很簡單', bottom: '你明天下班前交給我就好' },
+      { top: '我以為我的存款', bottom: '只夠買這碗滷肉飯' },
+      { top: '以為只是去逛逛', bottom: '出來手裡多了三個袋子' },
+      { top: '當你剛躺下準備睡覺', bottom: '腦袋突然開始回顧 10 年前的尷尬事' },
+      { top: '我：今天一定要早睡', bottom: '也是我（凌晨3點）：看貓咪洗澡影片' }
+    ];
+
+    // State
+    const state = {
+      imageSrc: PRESET_MEMES[0].url,
+      texts: [
+        {
+          id: 'text-top',
+          content: '當你發現明天是星期一',
+          fontSize: 38,
+          color: '#FFFFFF',
+          strokeColor: '#000000',
+          rotation: 0,
+          topPercent: 12,
+          leftPercent: 50
+        },
+        {
+          id: 'text-bottom',
+          content: '但你還沒開始寫作業',
+          fontSize: 38,
+          color: '#FFFFFF',
+          strokeColor: '#000000',
+          rotation: 0,
+          topPercent: 85,
+          leftPercent: 50
+        }
+      ],
+      filters: {
+        brightness: 100,
+        contrast: 100,
+        saturate: 100,
+        blur: 0
+      },
+      activeDragId: null
+    };
+
+    // DOM References
+    const memeImage = document.getElementById('meme-image');
+    const textOverlayLayer = document.getElementById('text-overlay-layer');
+    const textInputsContainer = document.getElementById('text-inputs-container');
+    const presetsGrid = document.getElementById('presets-grid');
+    const imageUploadInput = document.getElementById('image-upload-input');
+    const dropOverlay = document.getElementById('drop-overlay');
+
+    // Filter Sliders
+    const filterInputs = {
+      brightness: document.getElementById('filter-brightness'),
+      contrast: document.getElementById('filter-contrast'),
+      saturate: document.getElementById('filter-saturate'),
+      blur: document.getElementById('filter-blur')
+    };
+
+    // Initialize
+    window.onload = function() {
+      lucide.createIcons();
+      initPresets();
+      bindFilterEvents();
+      bindUploadEvents();
+      bindDragAndDropEvents();
+      bindExportEvents();
+      bindStageDrag();
+
+      // Load initial default meme
+      loadBaseImage(state.imageSrc);
+    };
+
+    function initPresets() {
+      presetsGrid.innerHTML = '';
+      PRESET_MEMES.forEach((preset, index) => {
+        const item = document.createElement('button');
+        item.className = `btn-pop aspect-square rounded-xl overflow-hidden bg-black relative group ${
+          state.imageSrc === preset.url ? 'ring-4 ring-memeYellow scale-95' : ''
+        }`;
+        item.onclick = () => {
+          loadBaseImage(preset.url);
+          document.querySelectorAll('#presets-grid button').forEach(b => b.classList.remove('ring-4', 'ring-memeYellow', 'scale-95'));
+          item.classList.add('ring-4', 'ring-memeYellow', 'scale-95');
         };
 
-        // 以 DataURL (base64) 格式讀取圖檔
-        reader.readAsDataURL(file);
-      }
-    });
+        const img = document.createElement('img');
+        img.src = preset.url;
+        img.alt = preset.name;
+        img.className = 'w-full h-full object-cover group-hover:scale-110 transition-transform';
 
-    // 載入預設梗圖範例
-    function loadPresetImage(type) {
-      const presets = {
-        'doge': 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&auto=format&fit=crop&q=80',
-        'cat': 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800&auto=format&fit=crop&q=80',
-        'success': 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=800&auto=format&fit=crop&q=80'
-      };
-      if (presets[type]) {
-        memeImage.src = presets[type];
-      }
-    }
-
-    // ==========================================
-    // 3. 即時渲染文字與樣式更新函數
-    // ==========================================
-    function updateMemeText() {
-      // (1) 更新上方與下方文字內容
-      topTextDisplay.textContent = topTextInput.value || '';
-      bottomTextDisplay.textContent = bottomTextInput.value || '';
-
-      // (2) 更新字體大小
-      const fontSize = fontSizeSlider.value;
-      topTextDisplay.style.fontSize = `${fontSize}px`;
-      bottomTextDisplay.style.fontSize = `${fontSize}px`;
-      fontSizeVal.textContent = `${fontSize}px`;
-
-      // (3) 更新上方文字垂直位置 (Top Offset %)
-      const topPos = topPosSlider.value;
-      topTextDisplay.style.top = `${topPos}%`;
-      topPosVal.textContent = `${topPos}%`;
-
-      // (4) 更新下方文字垂直位置 (Bottom Offset %)
-      const bottomPos = bottomPosSlider.value;
-      bottomTextDisplay.style.bottom = `${bottomPos}%`;
-      bottomPosVal.textContent = `${bottomPos}%`;
-
-      // (5) 更新文字顏色
-      const color = textColorPicker.value;
-      topTextDisplay.style.color = color;
-      bottomTextDisplay.style.color = color;
-    }
-
-    // ==========================================
-    // 4. 事件監聽 (Event Listeners) - 當輸入框或滑桿改變時自動更新
-    // ==========================================
-    topTextInput.addEventListener('input', updateMemeText);
-    bottomTextInput.addEventListener('input', updateMemeText);
-    fontSizeSlider.addEventListener('input', updateMemeText);
-    topPosSlider.addEventListener('input', updateMemeText);
-    bottomPosSlider.addEventListener('input', updateMemeText);
-    textColorPicker.addEventListener('input', updateMemeText);
-
-    // ==========================================
-    // 5. 一鍵截圖下載功能 (使用 html2canvas)
-    // ==========================================
-    downloadBtn.addEventListener('click', function() {
-      // 顯示下載中動態狀態
-      const originalText = downloadBtn.innerHTML;
-      downloadBtn.innerHTML = '⏳ 正在生成梗圖中...';
-      downloadBtn.disabled = true;
-
-      // 使用 html2canvas 將 memeContainer 轉畫布 (canvas)
-      html2canvas(memeContainer, {
-        useCORS: true, // 允許跨網域圖片截圖
-        scale: 2,      // 提高輸出的解析度 (2x 畫質)
-        backgroundColor: null
-      }).then(canvas => {
-        // 將 canvas 轉成圖片 URL
-        const imageUrl = canvas.toDataURL('image/png');
-
-        // 建立隱藏的 <a> 標籤來觸發瀏覽器下載動作
-        const downloadLink = document.createElement('a');
-        downloadLink.href = imageUrl;
-        downloadLink.download = 'my-meme.png'; // 設定下載檔名
-
-        // 觸發點擊並移除標籤
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-
-        // 恢復按鈕狀態
-        downloadBtn.innerHTML = '✅ 下載成功！再一張！';
-        setTimeout(() => {
-          downloadBtn.innerHTML = originalText;
-          downloadBtn.disabled = false;
-        }, 2000);
-      }).catch(err => {
-        console.error('截圖失敗：', err);
-        alert('生成迷因時發生錯誤，請確認圖片已順利載入！');
-        downloadBtn.innerHTML = originalText;
-        downloadBtn.disabled = false;
+        item.appendChild(img);
+        presetsGrid.appendChild(item);
       });
+    }
+
+    function loadBaseImage(src) {
+      memeImage.src = src;
+      memeImage.onload = () => {
+        state.imageSrc = src;
+        applyFilters();
+        renderOverlayTexts();
+        renderTextControls();
+      };
+    }
+
+    // Render Overlay Text Elements
+    function renderOverlayTexts() {
+      textOverlayLayer.innerHTML = '';
+
+      state.texts.forEach(item => {
+        const textNode = document.createElement('div');
+        textNode.id = `overlay-${item.id}`;
+        textNode.className = 'absolute cursor-move select-none whitespace-nowrap meme-text-render active:scale-105 transition-transform';
+        
+        textNode.textContent = item.content.toUpperCase() || '輸入迷因文字';
+
+        // Apply Styles
+        textNode.style.left = `${item.leftPercent}%`;
+        textNode.style.top = `${item.topPercent}%`;
+        textNode.style.transform = `translate(-50%, -50%) rotate(${item.rotation}deg)`;
+        textNode.style.fontSize = `${item.fontSize}px`;
+        textNode.style.color = item.color;
+        textNode.style.webkitTextStroke = `2px ${item.strokeColor}`;
+
+        // Pointer event listeners for dragging
+        textNode.addEventListener('mousedown', (e) => startDraggingText(e, item.id));
+        textNode.addEventListener('touchstart', (e) => startDraggingText(e, item.id), { passive: false });
+
+        textOverlayLayer.appendChild(textNode);
+      });
+    }
+
+    // Dragging Logic
+    function bindStageDrag() {
+      const onMove = (e) => {
+        if (!state.activeDragId) return;
+        e.preventDefault();
+
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        const rect = textOverlayLayer.getBoundingClientRect();
+        let leftPercent = ((clientX - rect.left) / rect.width) * 100;
+        let topPercent = ((clientY - rect.top) / rect.height) * 100;
+
+        // Keep inside boundary
+        leftPercent = Math.max(0, Math.min(100, leftPercent));
+        topPercent = Math.max(0, Math.min(100, topPercent));
+
+        const textObj = state.texts.find(t => t.id === state.activeDragId);
+        if (textObj) {
+          textObj.leftPercent = leftPercent;
+          textObj.topPercent = topPercent;
+          renderOverlayTexts();
+        }
+      };
+
+      const onEnd = () => {
+        state.activeDragId = null;
+      };
+
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('mouseup', onEnd);
+      window.addEventListener('touchend', onEnd);
+    }
+
+    function startDraggingText(e, id) {
+      state.activeDragId = id;
+    }
+
+    // Control Panel Inputs
+    function renderTextControls() {
+      textInputsContainer.innerHTML = '';
+
+      state.texts.forEach((textItem, index) => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-800 border-2 border-black rounded-2xl p-3.5 flex flex-col gap-3 shadow-pop';
+
+        const labelName = index === 0 ? '上方文字 (Top)' : (index === 1 ? '下方文字 (Bottom)' : `圖層 #${index + 1}`);
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-memeYellow">${labelName}</span>
+            ${state.texts.length > 1 ? `
+              <button data-action="delete" data-id="${textItem.id}" class="text-slate-400 hover:text-rose-400 transition-colors">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            ` : ''}
+          </div>
+
+          <input type="text" data-action="content" data-id="${textItem.id}" value="${textItem.content}" placeholder="輸入爆笑文字..." class="w-full bg-slate-900 text-white font-bold text-sm px-3 py-2 rounded-xl border-2 border-black focus:border-memeYellow focus:outline-none" />
+
+          <div class="grid grid-cols-2 gap-3 text-xs font-bold">
+            <!-- Size Slider -->
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-slate-300">
+                <span>大小</span>
+                <span>${textItem.fontSize}px</span>
+              </div>
+              <input type="range" data-action="fontSize" data-id="${textItem.id}" min="16" max="90" value="${textItem.fontSize}">
+            </div>
+
+            <!-- Rotation Slider -->
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-slate-300">
+                <span>旋轉</span>
+                <span>${textItem.rotation}°</span>
+              </div>
+              <input type="range" data-action="rotation" data-id="${textItem.id}" min="-180" max="180" value="${textItem.rotation}">
+            </div>
+
+            <!-- Text Color -->
+            <div class="flex items-center justify-between bg-slate-900 p-2 rounded-xl border-2 border-black">
+              <span class="text-slate-300">字體顏色</span>
+              <input type="color" data-action="color" data-id="${textItem.id}" value="${textItem.color}" class="w-6 h-6 rounded border-0 bg-transparent cursor-pointer">
+            </div>
+
+            <!-- Stroke Color -->
+            <div class="flex items-center justify-between bg-slate-900 p-2 rounded-xl border-2 border-black">
+              <span class="text-slate-300">描邊顏色</span>
+              <input type="color" data-action="strokeColor" data-id="${textItem.id}" value="${textItem.strokeColor}" class="w-6 h-6 rounded border-0 bg-transparent cursor-pointer">
+            </div>
+          </div>
+        `;
+
+        textInputsContainer.appendChild(card);
+      });
+
+      lucide.createIcons();
+      bindTextControlEvents();
+    }
+
+    function bindTextControlEvents() {
+      textInputsContainer.querySelectorAll('input, button').forEach(elem => {
+        elem.addEventListener('input', handleTextControlChange);
+        elem.addEventListener('click', handleTextControlClick);
+      });
+    }
+
+    function handleTextControlChange(e) {
+      const action = e.target.dataset.action;
+      const id = e.target.dataset.id;
+      const item = state.texts.find(t => t.id === id);
+      if (!item || !action) return;
+
+      if (action === 'content') item.content = e.target.value;
+      if (action === 'fontSize') item.fontSize = parseInt(e.target.value);
+      if (action === 'rotation') item.rotation = parseInt(e.target.value);
+      if (action === 'color') item.color = e.target.value;
+      if (action === 'strokeColor') item.strokeColor = e.target.value;
+
+      renderOverlayTexts();
+    }
+
+    function handleTextControlClick(e) {
+      const button = e.target.closest('button');
+      if (!button) return;
+
+      const action = button.dataset.action;
+      const id = button.dataset.id;
+
+      if (action === 'delete') {
+        state.texts = state.texts.filter(t => t.id !== id);
+        renderOverlayTexts();
+        renderTextControls();
+      }
+    }
+
+    // Add Text Layer
+    document.getElementById('btn-add-text').addEventListener('click', () => {
+      const newId = `text-${Date.now()}`;
+      state.texts.push({
+        id: newId,
+        content: '新梗圖文字',
+        fontSize: 32,
+        color: '#FFE600',
+        strokeColor: '#000000',
+        rotation: 0,
+        topPercent: 50,
+        leftPercent: 50
+      });
+      renderOverlayTexts();
+      renderTextControls();
+      showToast('已新增一個文字圖層！');
     });
 
-    // ==========================================
-    // 6. 重置按鈕邏輯
-    // ==========================================
-    resetBtn.addEventListener('click', function() {
-      topTextInput.value = '當你寫的 CODE';
-      bottomTextInput.value = '一次就通過測試時';
-      fontSizeSlider.value = 36;
-      topPosSlider.value = 5;
-      bottomPosSlider.value = 5;
-      textColorPicker.value = '#ffffff';
-      updateMemeText();
+    // Random Meme Quotes Button
+    document.getElementById('btn-random-text').addEventListener('click', () => {
+      const randomQuote = POPULAR_MEME_QUOTES[Math.floor(Math.random() * POPULAR_MEME_QUOTES.length)];
+      if (state.texts[0]) state.texts[0].content = randomQuote.top;
+      if (state.texts[1]) state.texts[1].content = randomQuote.bottom;
+      renderOverlayTexts();
+      renderTextControls();
+      showToast('🎲 已載入爆笑網路流行語！');
     });
 
-    // ==========================================
-    // 7. 頁面初始化
-    // ==========================================
-    window.onload = function() {
-      updateMemeText();
-    };
+    // Filter Controls Binding
+    function bindFilterEvents() {
+      Object.keys(filterInputs).forEach(key => {
+        filterInputs[key].addEventListener('input', (e) => {
+          state.filters[key] = e.target.value;
+          document.getElementById(`val-${key}`).textContent = key === 'blur' ? `${e.target.value}px` : `${e.target.value}%`;
+          applyFilters();
+        });
+      });
+
+      document.getElementById('btn-reset-all').addEventListener('click', () => {
+        state.filters = { brightness: 100, contrast: 100, saturate: 100, blur: 0 };
+        Object.keys(filterInputs).forEach(k => {
+          filterInputs[k].value = state.filters[k];
+          document.getElementById(`val-${k}`).textContent = k === 'blur' ? '0px' : '100%';
+        });
+        applyFilters();
+
+        state.texts = [
+          { id: 'text-top', content: '當你發現明天是星期一', fontSize: 38, color: '#FFFFFF', strokeColor: '#000000', rotation: 0, topPercent: 12, leftPercent: 50 },
+          { id: 'text-bottom', content: '但你還沒開始寫作業', fontSize: 38, color: '#FFFFFF', strokeColor: '#000000', rotation: 0, topPercent: 85, leftPercent: 50 }
+        ];
+        renderOverlayTexts();
+        renderTextControls();
+        showToast('已恢復預設設定');
+      });
+    }
+
+    function applyFilters() {
+      const f = state.filters;
+      memeImage.style.filter = `brightness(${f.brightness}%) contrast(${f.contrast}%) saturate(${f.saturate}%) blur(${f.blur}px)`;
+    }
+
+    // Upload Binding
+    function bindUploadEvents() {
+      imageUploadInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleFileStream(file);
+      });
+    }
+
+    function bindDragAndDropEvents() {
+      const stage = document.body;
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        stage.addEventListener(evt, (e) => {
+          e.preventDefault();
+          dropOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(evt => {
+        stage.addEventListener(evt, (e) => {
+          e.preventDefault();
+          dropOverlay.classList.add('opacity-0', 'pointer-events-none');
+        });
+      });
+
+      stage.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          handleFileStream(files[0]);
+        }
+      });
+    }
+
+    function handleFileStream(file) {
+      if (!file.type.startsWith('image/')) {
+        showToast('請上傳正確的圖片格式！', 'error');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        loadBaseImage(e.target.result);
+        showToast('本機圖片載入成功！');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Export Canvas Generator
+    function generateMemeCanvas() {
+      return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const img = new Image();
+        img.src = memeImage.src;
+
+        img.onload = () => {
+          canvas.width = img.naturalWidth || 600;
+          canvas.height = img.naturalHeight || 600;
+
+          // Apply filters to canvas context
+          const f = state.filters;
+          ctx.filter = `brightness(${f.brightness}%) contrast(${f.contrast}%) saturate(${f.saturate}%) blur(${f.blur}px)`;
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          ctx.filter = 'none';
+
+          // Draw Texts
+          state.texts.forEach(item => {
+            ctx.save();
+
+            const x = (item.leftPercent / 100) * canvas.width;
+            const y = (item.topPercent / 100) * canvas.height;
+
+            const displayWidth = memeImage.clientWidth || 600;
+            const scaleFactor = canvas.width / displayWidth;
+            const computedFontSize = item.fontSize * scaleFactor;
+
+            ctx.translate(x, y);
+            ctx.rotate((item.rotation * Math.PI) / 180);
+
+            ctx.font = `900 ${computedFontSize}px Impact, "Noto Sans TC", sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const textToDraw = item.content.toUpperCase();
+
+            // Draw Stroke
+            ctx.strokeStyle = item.strokeColor;
+            ctx.lineWidth = Math.max(4, computedFontSize / 8);
+            ctx.lineJoin = 'miter';
+            ctx.miterLimit = 2;
+            ctx.strokeText(textToDraw, 0, 0);
+
+            // Draw Fill
+            ctx.fillStyle = item.color;
+            ctx.fillText(textToDraw, 0, 0);
+
+            ctx.restore();
+          });
+
+          resolve(canvas);
+        };
+
+        img.onerror = (err) => reject(err);
+      });
+    }
+
+    function bindExportEvents() {
+      // Download
+      document.getElementById('btn-download-image').addEventListener('click', async () => {
+        try {
+          const canvas = await generateMemeCanvas();
+          const link = document.createElement('a');
+          link.download = `meme-${Date.now()}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          showToast('🚀 迷因圖片已成功下載！');
+        } catch (err) {
+          console.error(err);
+          showToast('產生迷因圖片失敗', 'error');
+        }
+      });
+
+      // Clipboard Copy
+      document.getElementById('btn-copy-image').addEventListener('click', async () => {
+        try {
+          const canvas = await generateMemeCanvas();
+          canvas.toBlob(async (blob) => {
+            if (!blob) return;
+            try {
+              await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blob })
+              ]);
+              showToast('📋 已複製梗圖到剪貼簿！');
+            } catch (clipErr) {
+              showToast('請使用下載按鈕保存梗圖', 'error');
+            }
+          }, 'image/png');
+        } catch (err) {
+          console.error(err);
+          showToast('複製過程發生錯誤', 'error');
+        }
+      });
+    }
+
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMsg.textContent = msg;
+      toastIcon.textContent = type === 'error' ? '❌' : '🎉';
+
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 2500);
+    }
   </script>
 </body>
 </html>
