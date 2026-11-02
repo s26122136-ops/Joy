@@ -539,10 +539,13 @@
             <!-- Week 3 (已解鎖) -->
             <a href="w3/index.html" class="card unlocked">
                 <div class="card-header">
-                    <span class="week-tag">Week 03</span>
-                    <span class="card-arrow">→</span>
+                    <span class="badge">WEEK 03</span>
+                    <span class="icon">🎭</span>
                 </div>
-                <div class="card-title">Week 3 - 迷因產生器?</div>
+                <div class="card-title">Week 3 - 迷因產生器</div>
+                <div class="card-footer">
+                    <span class="action-text">前往關卡 ➔</span>
+                </div>
             </a>
 
             <!-- Week 4 (解鎖：悄悄話動態留言板) -->
