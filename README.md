@@ -1,401 +1,280 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>網頁作品集 - 學習闖關地圖</title>
-    <!-- Google Fonts: Noto Sans TC & Poppins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ==================== 基礎與變數設定 ==================== */
-        :root {
-            --bg-color: #0d0614;
-            --card-bg: rgba(29, 15, 48, 0.7);
-            --primary-purple: #9d4edd;
-            --accent-glow: #c77dff;
-            --neon-pink: #f72585;
-            --text-light: #f8f9fa;
-            --text-muted: #a092b7;
-            --locked-bg: rgba(20, 15, 30, 0.6);
-            --locked-border: #2d1e40;
-            --locked-text: #605075;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>網頁程式設計作品集 | Web Course Portfolio</title>
+  <!-- 引入 Google Fonts 襯線字體 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* CSS 全域變數設定（莫蘭迪文青風格配色） */
+    :root {
+      --bg-color: #f7f5f0;
+      --card-unlocked-bg: #ffffff;
+      --card-locked-bg: #eae8e1;
+      --primary-text: #3c3c3c;
+      --secondary-text: #7c7c7c;
+      --accent-color: #8c977d; /* 莫蘭迪鼠尾草綠 */
+      --accent-hover: #707b62;
+      --locked-text: #9e9e9e;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.08);
+      --transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        body {
-            font-family: 'Poppins', 'Noto Sans TC', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-light);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 40px 20px;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(157, 78, 221, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(247, 37, 133, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(60, 9, 108, 0.2) 0%, transparent 60%);
-            background-attachment: fixed;
-            overflow-x: hidden;
-        }
+    body {
+      font-family: 'Noto Serif TC', serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+      background-color: var(--bg-color);
+      color: var(--primary-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 3rem 1.5rem;
+      line-height: 1.6;
+    }
 
-        .container {
-            width: 100%;
-            max-width: 1100px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    /* 個人大頭貼與標題區塊 */
+    .profile-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      animation: fadeIn 1s ease-in-out;
+    }
 
-        /* ==================== 個人資訊區塊 (Header) ==================== */
-        .profile-card {
-            text-align: center;
-            margin-bottom: 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: fadeInDown 0.8s ease-out;
-        }
+    .avatar-wrapper {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 1.2rem;
+      border-radius: 50%;
+      padding: 5px;
+      background: linear-gradient(135deg, var(--accent-color), #c2b9a7);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
 
-        .avatar-wrapper {
-            position: relative;
-            width: 130px;
-            height: 130px;
-            margin-bottom: 20px;
-        }
+    .avatar-wrapper:hover {
+      transform: scale(1.05) rotate(2deg);
+      box-shadow: var(--shadow-lg);
+    }
 
-        .avatar-glow {
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--neon-pink), var(--primary-purple), var(--accent-glow));
-            background-size: 300% 300%;
-            animation: neonGlow 4s ease infinite;
-            filter: blur(8px);
-            z-index: 1;
-        }
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      display: block;
+    }
 
-        .avatar-img {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            z-index: 2;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-        }
+    .profile-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-text);
+      letter-spacing: 2px;
+      margin-bottom: 0.3rem;
+    }
 
-        .user-name {
-            font-size: 2.2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #ffffff 0%, var(--accent-glow) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
+    .profile-subtitle {
+      font-size: 0.95rem;
+      color: var(--secondary-text);
+      letter-spacing: 1px;
+    }
 
-        .user-title {
-            font-size: 1rem;
-            color: var(--text-muted);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 500;
-            background: rgba(157, 78, 221, 0.15);
-            padding: 6px 18px;
-            border-radius: 20px;
-            border: 1px solid rgba(157, 78, 221, 0.3);
-        }
+    /* 網格作品集中樞容器 */
+    .portfolio-grid {
+      width: 100%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
 
-        /* ==================== 作品集網格 (Grid) ==================== */
-        .grid-title {
-            align-self: flex-start;
-            font-size: 1.2rem;
-            color: var(--accent-glow);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
+    /* 作品卡片基本樣式 */
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 110px;
+      border-radius: 14px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      padding: 1rem;
+      transition: var(--transition);
+      user-select: none;
+    }
 
-        .grid-title::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 20px;
-            background: var(--neon-pink);
-            border-radius: 4px;
-        }
+    /* 1. 已解鎖狀態 (Week 1 & Week 2) */
+    .card.unlocked {
+      background-color: var(--card-unlocked-bg);
+      color: var(--primary-text);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+    }
 
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            width: 100%;
-        }
+    .card.unlocked .week-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent-color);
+      letter-spacing: 1px;
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+    }
 
-        /* ==================== 卡片與按鈕樣式 ==================== */
-        .card {
-            text-decoration: none;
-            border-radius: 16px;
-            padding: 22px 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 130px;
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
+    .card.unlocked .title {
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--primary-text);
+      transition: var(--transition);
+    }
 
-        /* 已解鎖卡片 (Unlocked) */
-        .card.unlocked {
-            background: var(--card-bg);
-            border: 1px solid rgba(157, 78, 221, 0.4);
-            cursor: pointer;
-        }
+    /* 已解鎖懸停效果 (Hover Animation) */
+    .card.unlocked:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent-color);
+      background-color: #faf9f6;
+    }
 
-        .card.unlocked::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-            transition: 0.6s;
-        }
+    .card.unlocked:hover .title {
+      color: var(--accent-color);
+    }
 
-        .card.unlocked:hover::before {
-            left: 100%;
-        }
+    .card.unlocked::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background-color: var(--accent-color);
+      transform: scaleX(0);
+      transition: var(--transition);
+    }
 
-        .card.unlocked:hover {
-            transform: translateY(-8px) scale(1.02);
-            border-color: var(--accent-glow);
-            box-shadow: 0 12px 30px rgba(157, 78, 221, 0.4), 
-                        0 0 15px rgba(199, 125, 255, 0.2);
-            background: rgba(45, 20, 75, 0.85);
-        }
+    .card.unlocked:hover::after {
+      transform: scaleX(1);
+    }
 
-        .card.unlocked .badge {
-            background: linear-gradient(135deg, var(--neon-pink), var(--primary-purple));
-            color: #fff;
-            box-shadow: 0 2px 8px rgba(247, 37, 133, 0.4);
-        }
+    /* 2. 未解鎖狀態 (Week 3 ~ 16) */
+    .card.locked {
+      background-color: var(--card-locked-bg);
+      color: var(--locked-text);
+      cursor: not-allowed;
+      border: 1px dashed #d0cdb8;
+    }
 
-        .card.unlocked .card-title {
-            color: var(--text-light);
-        }
+    .card.locked .lock-icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.3rem;
+      opacity: 0.7;
+      transition: transform 0.3s ease;
+    }
 
-        .card.unlocked .action-text {
-            color: var(--accent-glow);
-            font-weight: 700;
-        }
+    .card.locked .title {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--locked-text);
+    }
 
-        /* 未解鎖卡片 (Locked) */
-        .card.locked {
-            background: var(--locked-bg);
-            border: 1px solid var(--locked-border);
-            cursor: not-allowed;
-            opacity: 0.75;
-        }
+    /* 未解鎖懸停效果：鎖頭晃動微動畫 */
+    .card.locked:hover {
+      background-color: #e4e1d7;
+    }
 
-        .card.locked:hover {
-            transform: translateY(-2px);
-            border-color: rgba(157, 78, 221, 0.2);
-        }
+    .card.locked:hover .lock-icon {
+      animation: shake 0.5s ease-in-out;
+    }
 
-        .card.locked .badge {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--locked-text);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+    /* 動畫定義 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .card.locked .card-title {
-            color: var(--locked-text);
-        }
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      20% { transform: rotate(-12deg); }
+      40% { transform: rotate(12deg); }
+      60% { transform: rotate(-8deg); }
+      80% { transform: rotate(8deg); }
+    }
 
-        .card.locked .action-text {
-            color: var(--locked-text);
-            font-size: 0.8rem;
-        }
+    /* 響應式佈局設定 (RWD) */
+    @media (max-width: 768px) {
+      .portfolio-grid {
+        grid-template-columns: repeat(2, 1fr); /* 平板/大手機顯示兩欄 */
+        gap: 1rem;
+      }
+    }
 
-        /* 卡片內部元素 */
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
+    @media (max-width: 480px) {
+      body {
+        padding: 2rem 1rem;
+      }
+      .portfolio-grid {
+        grid-template-columns: repeat(2, 1fr); /* 小型手機維持雙欄，提高精緻感 */
+        gap: 0.8rem;
+      }
+      .card {
+        height: 100px;
+        padding: 0.8rem;
+      }
+      .card.unlocked .title {
+        font-size: 0.9rem;
+      }
+    }
 
-        .badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 12px;
-            letter-spacing: 0.5px;
-        }
-
-        .icon {
-            font-size: 1.2rem;
-        }
-
-        .card-title {
-            font-size: 1.05rem;
-            font-weight: 700;
-            line-height: 1.4;
-            margin-bottom: 12px;
-        }
-
-        .card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.85rem;
-        }
-
-        .action-text {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: gap 0.2s ease;
-        }
-
-        .card.unlocked:hover .action-text {
-            gap: 8px;
-        }
-
-        /* 點擊鎖定卡片的搖晃動畫 */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
-        }
-
-        .shake-anim {
-            animation: shake 0.4s ease-in-out;
-        }
-
-        /* ==================== 頁尾 (Footer) ==================== */
-        footer {
-            margin-top: 50px;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            text-align: center;
-        }
-
-        /* ==================== 動畫效果 ==================== */
-        @keyframes neonGlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ==================== 響應式設計 (RWD) ==================== */
-        @media (max-width: 992px) {
-            .portfolio-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .portfolio-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-            .user-name {
-                font-size: 1.8rem;
-            }
-            .avatar-wrapper {
-                width: 110px;
-                height: 110px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .portfolio-grid {
-                grid-template-columns: 1fr;
-            }
-            body {
-                padding: 25px 15px;
-            }
-            .card {
-                padding: 18px 16px;
-                min-height: auto;
-            }
-        }
-    </style>
+    /* 頁尾聲明 */
+    footer {
+      margin-top: 3.5rem;
+      font-size: 0.8rem;
+      color: var(--secondary-text);
+      letter-spacing: 1px;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- 個人資訊區塊 -->
-        <header class="profile-card">
-            <div class="avatar-wrapper">
-                <div class="avatar-glow"></div>
-                <img class="avatar-img" src="https://i.postimg.cc/28jGM5CR/temp-image-30F7BB40-034E-42DC-8F49-14F02BDB66C1.jpg" alt="大頭貼">
-            </div>
-            <h1 class="user-name"></h1>
-            <div class="user-title"></div>
-        </header>
+  <!-- 個人資料與頭像區塊 -->
+  <header class="profile-header">
+    <div class="avatar-wrapper">
+      <!-- 這裡預設載入您的照片 IMG_5180.PNG，若找不到圖片則有預設文字備援 -->
+      <img src="IMG_5180.PNG" alt="個人大頭貼" class="avatar-img" onerror="this.src='https://via.placeholder.com/150/d2c9b1/ffffff?text=Avatar'">
+    </div>
+    <h1 class="profile-name">網頁程式設計作品集</h1>
+    <p class="profile-subtitle">Web Design & Development Portfolio</p>
+  </header>
 
-        <!-- 關卡選單標題 -->
-        <div class="grid-title">闖關地圖 (16 個任務關卡)</div>
+  <!-- 16 個任務關卡按鈕網格 -->
+  <main class="portfolio-grid">
+    <!-- 已解鎖項目 1 -->
+    <a href="w1/index.html" class="card unlocked">
+      <span class="week-tag">Week 01</span>
+      <span class="title">數位名片</span>
+    </a>
 
-        <!-- 16 個按鈕網格區塊 -->
-        <main class="portfolio-grid">
-            
-            <!-- Week 1 (已解鎖) -->
-            <a href="w1/index.html" class="card unlocked">
-                <div class="card-header">
-                    <span class="badge">WEEK 01</span>
-                    <span class="icon">🚀</span>
-                </div>
-                <div class="card-title">Week 1 - 數位名片</div>
-                <div class="card-footer">
-                    <span class="action-text">前往關卡 ➔</span>
-                </div>
-            </a>
-
-            <!-- Week 2 (已解鎖) -->
-            <a href="w2/index.html" class="card unlocked">
-                <div class="card-header">
-                    <span class="badge">WEEK 02</span>
-                    <span class="icon">🍔</span>
-                </div>
-                <div class="card-title">Week 2 - 今天吃甚麼?</div>
-                <div class="card-footer">
-                    <span class="action-text">前往關卡 ➔</span>
-                </div>
-            </a>
+    <!-- 已解鎖項目 2 -->
+    <a href="w2/index.html" class="card unlocked">
+      <span class="week-tag">Week 02</span>
+      <span class="title">今天吃甚麼?</span>
+    </a>
 
             <!-- Week 3 (已解鎖) -->
             <a href="w3/index.html" class="card unlocked">
