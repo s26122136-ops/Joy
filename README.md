@@ -8,10 +8,7 @@
     <!-- 引入 Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Inter:wght@300;400;500;600;800&family=Noto+Sans+TC:wght@500;700;900&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <!-- 引入 html2canvas 截圖下載 CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
         /* --------------------------------------------------
@@ -30,7 +27,7 @@
             --shadow-soft: 0 10px 30px rgba(61, 64, 91, 0.05);
             --shadow-hover: 0 15px 35px rgba(61, 64, 91, 0.12);
 
-            /* 悄悄話留言板專用高亮顏色 */
+            /* 悄悄話留言板專用高亮顏色 (【顏色設定】) */
             --highlight-glow: rgba(224, 122, 95, 0.4); 
             --highlight-border: #e07a5f;
             --highlight-bg: #fffbf7;
@@ -462,6 +459,7 @@
             word-break: break-word;
         }
 
+        /* 【重點特效】輪播高亮放大亮起 (Highlight) */
         .msg-card.is-highlighted {
             transform: scale(1.05);
             border-color: var(--highlight-border);
@@ -470,6 +468,7 @@
             z-index: 10;
         }
 
+        /* 【重點特效】未選中變暗模糊 (Dimmed) */
         .masonry-container.has-active .msg-card:not(.is-highlighted) {
             opacity: 0.4;
             filter: blur(1px);
@@ -477,249 +476,7 @@
         }
 
         /* --------------------------------------------------
-         * 7. Week 3 迷因產生器 Modal 彈窗樣式 (搞笑風)
-         * -------------------------------------------------- */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.75);
-            z-index: 1000;
-            overflow-y: auto;
-            padding: 1rem;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .meme-app-wrapper {
-            background: #fffae6;
-            border: 4px solid #000;
-            border-radius: 20px;
-            box-shadow: 10px 10px 0px #000;
-            width: 100%;
-            max-width: 950px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            padding: 2rem;
-            color: #000;
-            font-family: 'Noto Sans TC', sans-serif;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #ff595e;
-            color: #fff;
-            border: 3px solid #000;
-            font-size: 1.2rem;
-            font-weight: 900;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 3px 3px 0px #000;
-            transition: transform 0.1s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        .close-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px #000;
-        }
-
-        .meme-title {
-            text-align: center;
-            font-size: 2.2rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            background: #ffca3a;
-            display: inline-block;
-            padding: 0.3rem 1.2rem;
-            border: 3px solid #000;
-            box-shadow: 5px 5px 0px #000;
-            transform: rotate(-2deg);
-            margin-bottom: 1.5rem;
-        }
-
-        .meme-header-container {
-            text-align: center;
-        }
-
-        .meme-generator-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            align-items: start;
-        }
-
-        @media (max-width: 768px) {
-            .meme-generator-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .controls-panel {
-            background: #ffffff;
-            border: 3px solid #000;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 5px 5px 0px #000;
-        }
-
-        .control-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .control-group label {
-            display: block;
-            font-weight: 900;
-            margin-bottom: 0.4rem;
-            font-size: 1rem;
-        }
-
-        .funny-input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 3px solid #000;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            background: #f0f3f4;
-            outline: none;
-            transition: 0.2s;
-        }
-
-        .funny-input:focus {
-            background: #fff;
-            box-shadow: 3px 3px 0px #8ac926;
-        }
-
-        .funny-range {
-            width: 100%;
-            accent-color: #ff595e;
-            cursor: pointer;
-        }
-
-        .file-upload-btn {
-            display: inline-block;
-            width: 100%;
-            text-align: center;
-            background: #8ac926;
-            color: #000;
-            font-weight: 900;
-            padding: 0.8rem;
-            border: 3px solid #000;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 4px 4px 0px #000;
-            transition: all 0.1s ease;
-        }
-
-        .file-upload-btn:hover {
-            background: #9ef01a;
-        }
-
-        .file-upload-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000;
-        }
-
-        #image-input {
-            display: none;
-        }
-
-        .download-btn {
-            width: 100%;
-            background: #ff595e;
-            color: #fff;
-            font-size: 1.3rem;
-            font-weight: 900;
-            padding: 1rem;
-            border: 3px solid #000;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 5px 5px 0px #000;
-            margin-top: 1rem;
-            transition: all 0.1s ease;
-        }
-
-        .download-btn:hover {
-            background: #ff6b6b;
-        }
-
-        .download-btn:active {
-            transform: translate(3px, 3px);
-            box-shadow: 2px 2px 0px #000;
-        }
-
-        .preview-panel {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .meme-canvas-box {
-            position: relative;
-            width: 100%;
-            max-width: 420px;
-            background: #111;
-            border: 4px solid #000;
-            border-radius: 10px;
-            box-shadow: 8px 8px 0px #000;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px;
-        }
-
-        .meme-canvas-box img {
-            width: 100%;
-            height: auto;
-            display: block;
-            object-fit: contain;
-        }
-
-        .meme-text {
-            position: absolute;
-            width: 90%;
-            left: 5%;
-            text-align: center;
-            color: #ffffff;
-            font-family: 'Black Han Sans', 'Noto Sans TC', sans-serif;
-            font-weight: 900;
-            text-transform: uppercase;
-            line-height: 1.2;
-            word-wrap: break-word;
-            pointer-events: none;
-            text-shadow: 
-                3px 3px 0 #000, -3px 3px 0 #000, 3px -3px 0 #000, -3px -3px 0 #000,
-                0px 3px 0 #000,  0px -3px 0 #000, 3px  0px 0 #000, -3px  0px 0 #000;
-        }
-
-        .meme-text-top {
-            top: 10px;
-        }
-
-        .meme-text-bottom {
-            bottom: 10px;
-        }
-
-        /* --------------------------------------------------
-         * 8. 頁尾 Footer 資訊
+         * 7. 頁尾 Footer 資訊
          * -------------------------------------------------- */
         .footer {
             margin-top: 4rem;
@@ -779,14 +536,14 @@
                 <div class="card-title">Week 2 - 今天吃甚麼?</div>
             </a>
 
-            <!-- Week 3 (已解鎖 - 點擊開啟迷因產生器 Modal) -->
-            <div class="card unlocked" id="open-meme-btn">
+            <!-- Week 3 (已解鎖) -->
+            <a href="w3/index.html" class="card unlocked">
                 <div class="card-header">
                     <span class="week-tag">Week 03</span>
                     <span class="card-arrow">→</span>
                 </div>
-                <div class="card-title">Week 3 - 迷因產生器</div>
-            </div>
+                <div class="card-title">Week 3 - 迷因產生器?</div>
+            </a>
 
             <!-- Week 4 (解鎖：悄悄話動態留言板) -->
             <div onclick="openWhisperBoard()" class="card unlocked">
@@ -797,19 +554,113 @@
                 <div class="card-title">Week 4 - 悄悄話</div>
             </div>
 
-            <!-- Week 5 至 16 (未解鎖) -->
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 05</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 5 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 06</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 6 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 07</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 7 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 08</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 8 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 09</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 9 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 10</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 10 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 11</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 11 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 12</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 12 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 13</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 13 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 14</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 14 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 15</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 15 - 尚未解鎖</div></div>
-            <div class="card locked"><div class="card-header"><span class="week-tag">Week 16</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 16 - 尚未解鎖</div></div>
+            <!-- Week 5 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 05</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 5 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 6 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 06</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 6 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 7 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 07</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 7 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 8 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 08</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 8 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 9 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 09</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 9 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 10 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 10</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 10 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 11 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 11</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 11 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 12 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 12</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 12 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 13 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 13</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 13 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 14 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 14</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 14 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 15 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 15</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 15 - 尚未解鎖</div>
+            </div>
+
+            <!-- Week 16 (未解鎖) -->
+            <div class="card locked">
+                <div class="card-header">
+                    <span class="week-tag">Week 16</span>
+                    <span class="status-badge lock-icon">🔒</span>
+                </div>
+                <div class="card-title">Week 16 - 尚未解鎖</div>
+            </div>
 
         </section>
 
@@ -847,74 +698,15 @@
 
     </main>
 
-    <!-- =========================================================
-         【彈窗】Week 3 - 迷因產生器 Modal
-         ========================================================= -->
-    <div class="modal-overlay" id="meme-modal">
-        <div class="meme-app-wrapper">
-            <button class="close-btn" id="close-modal-btn">✕</button>
-            
-            <div class="meme-header-container">
-                <h2 class="meme-title">🤪 超吉迷因產生器</h2>
-            </div>
-
-            <div class="meme-generator-grid">
-                <!-- 左側控制面板 -->
-                <div class="controls-panel">
-                    <div class="control-group">
-                        <label>📁 上傳底圖 (本機圖片)</label>
-                        <label for="image-input" class="file-upload-btn">選擇檔案...</label>
-                        <input type="file" id="image-input" accept="image/*">
-                    </div>
-
-                    <div class="control-group">
-                        <label for="top-text-input">✍️ 上方文字</label>
-                        <input type="text" id="top-text-input" class="funny-input" placeholder="寫點搞笑的..." value="當你終於解鎖 WEEK 3">
-                    </div>
-
-                    <div class="control-group">
-                        <label for="bottom-text-input">✍️ 下方文字</label>
-                        <input type="text" id="bottom-text-input" class="funny-input" placeholder="再寫點更爆笑的..." value="扣子直接爆炸 💥">
-                    </div>
-
-                    <div class="control-group">
-                        <label for="font-size-range">📏 字體大小</label>
-                        <input type="range" id="font-size-range" class="funny-range" min="16" max="64" value="32">
-                    </div>
-
-                    <div class="control-group">
-                        <label for="top-pos-range">↕️ 上方文字位置</label>
-                        <input type="range" id="top-pos-range" class="funny-range" min="5" max="40" value="10">
-                    </div>
-
-                    <div class="control-group">
-                        <label for="bottom-pos-range">↕️ 下方文字位置</label>
-                        <input type="range" id="bottom-pos-range" class="funny-range" min="5" max="40" value="10">
-                    </div>
-
-                    <button class="download-btn" id="download-btn">🚀 一鍵下載 my-meme.png</button>
-                </div>
-
-                <!-- 右側即時預覽區 -->
-                <div class="preview-panel">
-                    <div class="meme-canvas-box" id="meme-preview-area">
-                        <img id="meme-image" src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=600&auto=format&fit=crop" alt="迷因底圖">
-                        <div id="meme-top-text" class="meme-text meme-text-top">當你終於解鎖 WEEK 3</div>
-                        <div id="meme-bottom-text" class="meme-text meme-text-bottom">扣子直接爆炸 💥</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- =========================================================
-         JavaScript 控制邏輯 (Week 4 留言牆 + Week 3 迷因產生器)
-         ========================================================= -->
     <script>
-        /* --------------------------------------------------
-         * 1. 頁面切換與 Week 4 悄悄話留言牆邏輯
-         * -------------------------------------------------- */
+        /* =========================================================
+         * JavaScript 控制邏輯與 Google 試算表 CSV 解析
+         * ========================================================= */
+
+        // 【資料網址設定】指定 Google 試算表 CSV 發佈網址
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSzQ9hxlz17-FjU9oXi-Qn-yKLyeRWVxbOGNXeZQhU3YX3LpUmH_ITjQKOLgyALuj-OQgpvoEEKJd7-/pub?output=csv';
+
+        // 【輪播秒數設定 Zone】控制高亮輪播切換間隔時間 (3000ms = 3 秒)
         const ROTATE_INTERVAL = 3000;
 
         let cardsData = [];
@@ -922,16 +714,21 @@
         let carouselTimer = null;
         let isLoaded = false;
 
+        // 頁面 DOM 元素參考
         const portalPage = document.getElementById('portal-page');
         const whisperPage = document.getElementById('whisper-page');
         const loadingEl = document.getElementById('loading');
         const wallEl = document.getElementById('masonry-wall');
 
+        /**
+         * 開啟悄悄話留言板頁面
+         */
         function openWhisperBoard() {
             portalPage.classList.add('hidden');
             whisperPage.classList.remove('hidden');
             window.scrollTo(0, 0);
 
+            // 若尚未讀取過資料則發起 Fetch 請求
             if (!isLoaded) {
                 loadWhisperData();
             } else if (cardsData.length > 0) {
@@ -939,26 +736,38 @@
             }
         }
 
+        /**
+         * 返回作品集入口主頁
+         */
         function openPortal() {
             whisperPage.classList.add('hidden');
             portalPage.classList.remove('hidden');
             window.scrollTo(0, 0);
+            
+            // 暫停輪播計時器節省資源
             clearInterval(carouselTimer);
         }
 
+        /**
+         * 使用 Fetch API 讀取 CSV 資料
+         */
         async function loadWhisperData() {
             try {
                 const response = await fetch(CSV_URL);
                 const csvText = await response.text();
 
+                // 解析 CSV 資料
                 cardsData = parseCSV(csvText);
                 isLoaded = true;
 
+                // 隱藏載入中，顯示留言牆
                 loadingEl.style.display = 'none';
                 wallEl.style.display = 'block';
 
+                // 動態生成卡片
                 renderCards(cardsData);
 
+                // 啟動 3 秒輪播高亮
                 if (cardsData.length > 0) {
                     wallEl.classList.add('has-active');
                     startCarousel();
@@ -969,6 +778,10 @@
             }
         }
 
+        /**
+         * 【CSV 解析器】
+         * 正確處理留言內容中含有逗號與雙引號的情形
+         */
         function parseCSV(text) {
             const result = [];
             let row = [];
@@ -1009,6 +822,7 @@
                 result.push(row);
             }
 
+            // 過濾跳過第 0 行欄位標題 (時間戳記, 名字, 悄悄話)
             return result.slice(1).map(r => ({
                 timestamp: r[0] || '',
                 name: r[1] || '無名氏',
@@ -1016,6 +830,9 @@
             }));
         }
 
+        /**
+         * 動態產生留言卡片
+         */
         function renderCards(data) {
             wallEl.innerHTML = '';
             data.forEach((item, index) => {
@@ -1023,6 +840,7 @@
                 card.className = 'msg-card';
                 card.dataset.index = index;
 
+                // 格式化日期
                 const timeText = item.timestamp ? item.timestamp.split(' ')[0] : '';
 
                 card.innerHTML = `
@@ -1033,6 +851,7 @@
                     <div class="msg-content">${escapeHTML(item.message)}</div>
                 `;
 
+                // 點擊手動高亮並重新計時
                 card.addEventListener('click', () => {
                     currentIndex = index;
                     updateHighlight();
@@ -1043,6 +862,9 @@
             });
         }
 
+        /**
+         * 啟動 3 秒輪播高亮特效
+         */
         function startCarousel() {
             if (currentIndex === -1) currentIndex = 0;
             updateHighlight();
@@ -1054,6 +876,9 @@
             }, ROTATE_INTERVAL);
         }
 
+        /**
+         * 更新高亮狀態 (加上明顯邊框、發光與放大)
+         */
         function updateHighlight() {
             const cards = wallEl.querySelectorAll('.msg-card');
             cards.forEach((card, idx) => {
@@ -1065,6 +890,9 @@
             });
         }
 
+        /**
+         * 重置輪播計時器
+         */
         function resetCarousel() {
             clearInterval(carouselTimer);
             carouselTimer = setInterval(() => {
@@ -1073,6 +901,9 @@
             }, ROTATE_INTERVAL);
         }
 
+        /**
+         * XSS 文字轉義防護
+         */
         function escapeHTML(str) {
             return str
                 .replace(/&/g, '&amp;')
@@ -1081,101 +912,6 @@
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
         }
-
-        /* --------------------------------------------------
-         * 2. Week 3 迷因產生器 Modal 控制邏輯
-         * -------------------------------------------------- */
-        const openMemeBtn = document.getElementById('open-meme-btn');
-        const closeMemeBtn = document.getElementById('close-modal-btn');
-        const memeModal = document.getElementById('meme-modal');
-
-        const imageInput = document.getElementById('image-input');
-        const memeImage = document.getElementById('meme-image');
-
-        const topTextInput = document.getElementById('top-text-input');
-        const bottomTextInput = document.getElementById('bottom-text-input');
-        const memeTopText = document.getElementById('meme-top-text');
-        const memeBottomText = document.getElementById('meme-bottom-text');
-
-        const fontSizeRange = document.getElementById('font-size-range');
-        const topPosRange = document.getElementById('top-pos-range');
-        const bottomPosRange = document.getElementById('bottom-pos-range');
-
-        const downloadBtn = document.getElementById('download-btn');
-        const memePreviewArea = document.getElementById('meme-preview-area');
-
-        // 開啟 / 關閉 彈窗
-        openMemeBtn.addEventListener('click', () => {
-            memeModal.classList.add('active');
-        });
-
-        closeMemeBtn.addEventListener('click', () => {
-            memeModal.classList.remove('active');
-        });
-
-        memeModal.addEventListener('click', (e) => {
-            if (e.target === memeModal) {
-                memeModal.classList.remove('active');
-            }
-        });
-
-        // 圖片上傳 (FileReader 避開 CORS)
-        imageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    memeImage.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // 即時文字同步
-        topTextInput.addEventListener('input', () => {
-            memeTopText.textContent = topTextInput.value;
-        });
-
-        bottomTextInput.addEventListener('input', () => {
-            memeBottomText.textContent = bottomTextInput.value;
-        });
-
-        // 滑桿即時控制
-        fontSizeRange.addEventListener('input', () => {
-            const size = fontSizeRange.value + 'px';
-            memeTopText.style.fontSize = size;
-            memeBottomText.style.fontSize = size;
-        });
-
-        topPosRange.addEventListener('input', () => {
-            memeTopText.style.top = topPosRange.value + 'px';
-        });
-
-        bottomPosRange.addEventListener('input', () => {
-            memeBottomText.style.bottom = bottomPosRange.value + 'px';
-        });
-
-        // 一鍵 html2canvas 截圖下載
-        downloadBtn.addEventListener('click', () => {
-            downloadBtn.innerText = "⏳ 正在生成截圖...";
-            
-            html2canvas(memePreviewArea, {
-                useCORS: true,
-                allowTaint: true,
-                scale: 2
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'my-meme.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-
-                downloadBtn.innerText = "🚀 一鍵下載 my-meme.png";
-            }).catch(err => {
-                console.error(err);
-                alert("下載失敗，請嘗試自行上傳本地圖片後再試一次！");
-                downloadBtn.innerText = "🚀 一鍵下載 my-meme.png";
-            });
-        });
     </script>
 </body>
 </html>
