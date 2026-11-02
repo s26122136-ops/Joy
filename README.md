@@ -261,20 +261,30 @@
     <h1 class="profile-name">網頁程式設計作品集</h1>
     <p class="profile-subtitle">Web Design & Development Portfolio</p>
   </header>
+            
+            <!-- Week 1 (已解鎖) -->
+            <a href="w1/index.html" class="card unlocked">
+                <div class="card-header">
+                    <span class="badge">WEEK 01</span>
+                    <span class="icon">🚀</span>
+                </div>
+                <div class="card-title">Week 1 - 數位名片</div>
+                <div class="card-footer">
+                    <span class="action-text">前往關卡 ➔</span>
+                </div>
+            </a>
 
-  <!-- 16 個任務關卡按鈕網格 -->
-  <main class="portfolio-grid">
-    <!-- 已解鎖項目 1 -->
-    <a href="w1/index.html" class="card unlocked">
-      <span class="week-tag">Week 01</span>
-      <span class="title">數位名片</span>
-    </a>
-
-    <!-- 已解鎖項目 2 -->
-    <a href="w2/index.html" class="card unlocked">
-      <span class="week-tag">Week 02</span>
-      <span class="title">今天吃甚麼?</span>
-    </a>
+            <!-- Week 2 (已解鎖) -->
+            <a href="w2/index.html" class="card unlocked">
+                <div class="card-header">
+                    <span class="badge">WEEK 02</span>
+                    <span class="icon">🍔</span>
+                </div>
+                <div class="card-title">Week 2 - 今天吃甚麼?</div>
+                <div class="card-footer">
+                    <span class="action-text">前往關卡 ➔</span>
+                </div>
+            </a>
 
             <!-- Week 3 (已解鎖) -->
             <a href="w3/index.html" class="card unlocked">
