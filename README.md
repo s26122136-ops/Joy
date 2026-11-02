@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>作品集入口 ‧ Portfolio Gateway</title>
     
-    <!-- 引入 Google Fonts: Noto Serif TC, Inter, 黑體, 與搞笑風炸裂字體 Black Han Sans -->
+    <!-- 引入 Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Inter:wght@300;400;500;600;800&family=Noto+Sans+TC:wght@500;700;900&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
@@ -29,6 +29,11 @@
             --border-color: #e2dfd7;      /* 柔和邊框 */
             --shadow-soft: 0 10px 30px rgba(61, 64, 91, 0.05);
             --shadow-hover: 0 15px 35px rgba(61, 64, 91, 0.12);
+
+            /* 悄悄話留言板專用高亮顏色 */
+            --highlight-glow: rgba(224, 122, 95, 0.4); 
+            --highlight-border: #e07a5f;
+            --highlight-bg: #fffbf7;
         }
 
         * {
@@ -67,15 +72,20 @@
         }
 
         /* --------------------------------------------------
-         * 2. 主要容器與淡入動畫
+         * 2. 主要頁面容器與切換動畫
          * -------------------------------------------------- */
-        .container {
+        .page-container {
             max-width: 1080px;
             width: 100%;
             margin: 0 auto;
             opacity: 0;
             transform: translateY(20px);
-            animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* 隱藏未活化的頁面 */
+        .page-container.hidden {
+            display: none;
         }
 
         @keyframes fadeInUp {
@@ -86,7 +96,7 @@
         }
 
         /* --------------------------------------------------
-         * 3. 個人資訊 Header 區塊
+         * 3. 個人資訊 Header 區塊 (入口頁)
          * -------------------------------------------------- */
         .profile-section {
             text-align: center;
@@ -114,7 +124,6 @@
             box-shadow: var(--shadow-hover);
         }
 
-        /* 頭像外圍細線飾環 */
         .avatar-wrapper::after {
             content: '';
             position: absolute;
@@ -161,31 +170,24 @@
          * -------------------------------------------------- */
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 預設 4x4 */
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
         }
 
         @media (max-width: 960px) {
-            .card-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+            .card-grid { grid-template-columns: repeat(3, 1fr); }
         }
 
         @media (max-width: 680px) {
-            .card-grid {
-                grid-template-columns: repeat(2, 1fr); /* 手機版雙欄 */
-                gap: 1rem;
-            }
+            .card-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
         }
 
         @media (max-width: 420px) {
-            .card-grid {
-                grid-template-columns: 1fr; /* 極小螢幕單欄 */
-            }
+            .card-grid { grid-template-columns: 1fr; }
         }
 
         /* --------------------------------------------------
-         * 5. 作品卡片基礎樣式
+         * 5. 作品卡片基礎樣式與互動效果
          * -------------------------------------------------- */
         .card {
             position: relative;
@@ -233,9 +235,7 @@
             justify-content: center;
         }
 
-        /* --------------------------------------------------
-         * 6. 卡片動態與互動效果 (Unlocked vs Locked)
-         * -------------------------------------------------- */
+        /* 已解鎖卡片 樣式 & Hover */
         .card.unlocked {
             border-left: 4px solid var(--accent-color);
             cursor: pointer;
@@ -252,12 +252,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.6),
-                transparent
-            );
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
             transition: 0.6s;
         }
 
@@ -281,6 +276,7 @@
             transform: translateX(4px);
         }
 
+        /* 未解鎖卡片 樣式 & Hover */
         .card.locked {
             background-color: var(--locked-bg);
             border-color: var(--border-color);
@@ -332,7 +328,156 @@
         }
 
         /* --------------------------------------------------
-         * 7. 搞笑風格迷因產生器 (Modal 彈窗樣式)
+         * 6. Week 4 悄悄話動態留言牆專屬樣式
+         * -------------------------------------------------- */
+        .board-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--card-bg);
+            color: var(--accent-color);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-family: 'Noto Serif TC', serif;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 1.5rem;
+        }
+
+        .back-btn:hover {
+            background: var(--accent-color);
+            color: #ffffff;
+            transform: translateX(-3px);
+        }
+
+        .board-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .board-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            letter-spacing: 1px;
+        }
+
+        /* 讀取中酷炫動畫 */
+        #loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 4rem 0;
+            gap: 1rem;
+        }
+
+        .whisper-spinner {
+            width: 45px;
+            height: 45px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s infinite linear, pulse 2s infinite ease-in-out;
+        }
+
+        #loading p {
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            font-size: 1rem;
+            animation: blink 1.5s infinite ease-in-out;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* 瀑布流排版 (Masonry Layout) */
+        .masonry-container {
+            width: 100%;
+            column-count: 3;
+            column-gap: 1.5rem;
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .masonry-container { column-count: 2; }
+        }
+        @media (max-width: 600px) {
+            .masonry-container { column-count: 1; }
+        }
+
+        /* 留言卡片樣式 */
+        .msg-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            break-inside: avoid;
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            box-shadow: var(--shadow-soft);
+            cursor: pointer;
+        }
+
+        .msg-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .msg-author {
+            font-weight: 600;
+            color: var(--accent-color);
+            font-size: 1rem;
+        }
+
+        .msg-time {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .msg-content {
+            line-height: 1.6;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .msg-card.is-highlighted {
+            transform: scale(1.05);
+            border-color: var(--highlight-border);
+            box-shadow: 0 10px 30px var(--highlight-glow);
+            background-color: var(--highlight-bg);
+            z-index: 10;
+        }
+
+        .masonry-container.has-active .msg-card:not(.is-highlighted) {
+            opacity: 0.4;
+            filter: blur(1px);
+            transform: scale(0.98);
+        }
+
+        /* --------------------------------------------------
+         * 7. Week 3 迷因產生器 Modal 彈窗樣式 (搞笑風)
          * -------------------------------------------------- */
         .modal-overlay {
             display: none;
@@ -412,7 +557,6 @@
             text-align: center;
         }
 
-        /* 產生器雙欄配置 */
         .meme-generator-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -426,7 +570,6 @@
             }
         }
 
-        /* 控制區 */
         .controls-panel {
             background: #ffffff;
             border: 3px solid #000;
@@ -521,7 +664,6 @@
             box-shadow: 2px 2px 0px #000;
         }
 
-        /* 預覽區 */
         .preview-panel {
             display: flex;
             flex-direction: column;
@@ -551,7 +693,6 @@
             object-fit: contain;
         }
 
-        /* 迷因文字樣式 (粗黑描邊) */
         .meme-text {
             position: absolute;
             width: 90%;
@@ -586,6 +727,7 @@
             font-size: 0.8rem;
             color: var(--text-sub);
             letter-spacing: 1px;
+            width: 100%;
         }
 
         .footer p {
@@ -596,7 +738,10 @@
 </head>
 <body>
 
-    <main class="container">
+    <!-- =========================================================
+         【頁面 A】作品集入口主頁面
+         ========================================================= -->
+    <main id="portal-page" class="page-container">
         
         <!-- 核心個人資訊 Header -->
         <header class="profile-section">
@@ -634,7 +779,7 @@
                 <div class="card-title">Week 2 - 今天吃甚麼?</div>
             </a>
 
-            <!-- Week 3 (已解鎖 - 迷因產生器 點擊開啟彈窗) -->
+            <!-- Week 3 (已解鎖 - 點擊開啟迷因產生器 Modal) -->
             <div class="card unlocked" id="open-meme-btn">
                 <div class="card-header">
                     <span class="week-tag">Week 03</span>
@@ -643,14 +788,14 @@
                 <div class="card-title">Week 3 - 迷因產生器</div>
             </div>
 
-            <!-- Week 4 (已解鎖 - 講八卦) -->
-            <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSzQ9hxlz17-FjU9oXi-Qn-yKLyeRWVxbOGNXeZQhU3YX3LpUmH_ITjQKOLgyALuj-OQgpvoEEKJd7-/pub?output=csv" target="_blank" class="card unlocked">
+            <!-- Week 4 (解鎖：悄悄話動態留言板) -->
+            <div onclick="openWhisperBoard()" class="card unlocked">
                 <div class="card-header">
                     <span class="week-tag">Week 04</span>
                     <span class="card-arrow">→</span>
                 </div>
-                <div class="card-title">Week 4 - 講八卦</div>
-            </a>
+                <div class="card-title">Week 4 - 悄悄話</div>
+            </div>
 
             <!-- Week 5 至 16 (未解鎖) -->
             <div class="card locked"><div class="card-header"><span class="week-tag">Week 05</span><span class="status-badge lock-icon">🔒</span></div><div class="card-title">Week 5 - 尚未解鎖</div></div>
@@ -675,9 +820,36 @@
 
     </main>
 
-    <!-- --------------------------------------------------
-     * 9. 迷因產生器 Modal 彈窗區塊
-     * -------------------------------------------------- -->
+    <!-- =========================================================
+         【頁面 B】Week 4 - 悄悄話留言板頁面
+         ========================================================= -->
+    <main id="whisper-page" class="page-container hidden">
+        
+        <header class="board-header">
+            <button class="back-btn" onclick="openPortal()">← 返回作品集</button>
+            <h1 class="board-title">🤫 悄悄話留言牆</h1>
+            <p class="board-subtitle">靜靜地聆聽，那些朋友們留給我的秘密與祝福...</p>
+            <div class="divider"></div>
+        </header>
+
+        <!-- 載入中動畫 -->
+        <div id="loading">
+            <div class="whisper-spinner"></div>
+            <p>讀取留言中...</p>
+        </div>
+
+        <!-- 瀑布流卡片牆 -->
+        <div id="masonry-wall" class="masonry-container"></div>
+
+        <footer class="footer">
+            <p>© Web Programming Portfolio Gateway. All Rights Reserved.</p>
+        </footer>
+
+    </main>
+
+    <!-- =========================================================
+         【彈窗】Week 3 - 迷因產生器 Modal
+         ========================================================= -->
     <div class="modal-overlay" id="meme-modal">
         <div class="meme-app-wrapper">
             <button class="close-btn" id="close-modal-btn">✕</button>
@@ -735,11 +907,184 @@
         </div>
     </div>
 
-    <!-- --------------------------------------------------
-     * 10. JavaScript 邏輯控制
-     * -------------------------------------------------- -->
+    <!-- =========================================================
+         JavaScript 控制邏輯 (Week 4 留言牆 + Week 3 迷因產生器)
+         ========================================================= -->
     <script>
-        // 取得 DOM 元素
+        /* --------------------------------------------------
+         * 1. 頁面切換與 Week 4 悄悄話留言牆邏輯
+         * -------------------------------------------------- */
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSzQ9hxlz17-FjU9oXi-Qn-yKLyeRWVxbOGNXeZQhU3YX3LpUmH_ITjQKOLgyALuj-OQgpvoEEKJd7-/pub?output=csv';
+        const ROTATE_INTERVAL = 3000;
+
+        let cardsData = [];
+        let currentIndex = -1;
+        let carouselTimer = null;
+        let isLoaded = false;
+
+        const portalPage = document.getElementById('portal-page');
+        const whisperPage = document.getElementById('whisper-page');
+        const loadingEl = document.getElementById('loading');
+        const wallEl = document.getElementById('masonry-wall');
+
+        function openWhisperBoard() {
+            portalPage.classList.add('hidden');
+            whisperPage.classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            if (!isLoaded) {
+                loadWhisperData();
+            } else if (cardsData.length > 0) {
+                startCarousel();
+            }
+        }
+
+        function openPortal() {
+            whisperPage.classList.add('hidden');
+            portalPage.classList.remove('hidden');
+            window.scrollTo(0, 0);
+            clearInterval(carouselTimer);
+        }
+
+        async function loadWhisperData() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+
+                cardsData = parseCSV(csvText);
+                isLoaded = true;
+
+                loadingEl.style.display = 'none';
+                wallEl.style.display = 'block';
+
+                renderCards(cardsData);
+
+                if (cardsData.length > 0) {
+                    wallEl.classList.add('has-active');
+                    startCarousel();
+                }
+            } catch (error) {
+                console.error('讀取 CSV 資料失敗:', error);
+                loadingEl.innerHTML = '<p style="color:#e07a5f;">讀取留言失敗，請確認網路連線或連結是否正確。</p>';
+            }
+        }
+
+        function parseCSV(text) {
+            const result = [];
+            let row = [];
+            let entry = '';
+            let insideQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const nextChar = text[i + 1];
+
+                if (char === '"') {
+                    if (insideQuotes && nextChar === '"') {
+                        entry += '"';
+                        i++;
+                    } else {
+                        insideQuotes = !insideQuotes;
+                    }
+                } else if (char === ',' && !insideQuotes) {
+                    row.push(entry.trim());
+                    entry = '';
+                } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+                    if (char === '\r' && nextChar === '\n') {
+                        i++;
+                    }
+                    row.push(entry.trim());
+                    if (row.length > 1 || row[0] !== '') {
+                        result.push(row);
+                    }
+                    row = [];
+                    entry = '';
+                } else {
+                    entry += char;
+                }
+            }
+
+            if (entry || row.length > 0) {
+                row.push(entry.trim());
+                result.push(row);
+            }
+
+            return result.slice(1).map(r => ({
+                timestamp: r[0] || '',
+                name: r[1] || '無名氏',
+                message: r[2] || '這封悄悄話是空的...'
+            }));
+        }
+
+        function renderCards(data) {
+            wallEl.innerHTML = '';
+            data.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'msg-card';
+                card.dataset.index = index;
+
+                const timeText = item.timestamp ? item.timestamp.split(' ')[0] : '';
+
+                card.innerHTML = `
+                    <div class="msg-header">
+                        <span class="msg-author">${escapeHTML(item.name)}</span>
+                        <span class="msg-time">${escapeHTML(timeText)}</span>
+                    </div>
+                    <div class="msg-content">${escapeHTML(item.message)}</div>
+                `;
+
+                card.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateHighlight();
+                    resetCarousel();
+                });
+
+                wallEl.appendChild(card);
+            });
+        }
+
+        function startCarousel() {
+            if (currentIndex === -1) currentIndex = 0;
+            updateHighlight();
+
+            clearInterval(carouselTimer);
+            carouselTimer = setInterval(() => {
+                currentIndex = (currentIndex + 1) % cardsData.length;
+                updateHighlight();
+            }, ROTATE_INTERVAL);
+        }
+
+        function updateHighlight() {
+            const cards = wallEl.querySelectorAll('.msg-card');
+            cards.forEach((card, idx) => {
+                if (idx === currentIndex) {
+                    card.classList.add('is-highlighted');
+                } else {
+                    card.classList.remove('is-highlighted');
+                }
+            });
+        }
+
+        function resetCarousel() {
+            clearInterval(carouselTimer);
+            carouselTimer = setInterval(() => {
+                currentIndex = (currentIndex + 1) % cardsData.length;
+                updateHighlight();
+            }, ROTATE_INTERVAL);
+        }
+
+        function escapeHTML(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        /* --------------------------------------------------
+         * 2. Week 3 迷因產生器 Modal 控制邏輯
+         * -------------------------------------------------- */
         const openMemeBtn = document.getElementById('open-meme-btn');
         const closeMemeBtn = document.getElementById('close-modal-btn');
         const memeModal = document.getElementById('meme-modal');
@@ -774,7 +1119,7 @@
             }
         });
 
-        // 1. 本機圖片讀取 (使用 FileReader 避開 CORS)
+        // 圖片上傳 (FileReader 避開 CORS)
         imageInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -786,7 +1131,7 @@
             }
         });
 
-        // 2. 即時文字同步輸入
+        // 即時文字同步
         topTextInput.addEventListener('input', () => {
             memeTopText.textContent = topTextInput.value;
         });
@@ -795,7 +1140,7 @@
             memeBottomText.textContent = bottomTextInput.value;
         });
 
-        // 3. 滑桿控制 (字體大小與垂直位置)
+        // 滑桿即時控制
         fontSizeRange.addEventListener('input', () => {
             const size = fontSizeRange.value + 'px';
             memeTopText.style.fontSize = size;
@@ -810,14 +1155,14 @@
             memeBottomText.style.bottom = bottomPosRange.value + 'px';
         });
 
-        // 4. 一鍵截圖下載 (使用 html2canvas)
+        // 一鍵 html2canvas 截圖下載
         downloadBtn.addEventListener('click', () => {
             downloadBtn.innerText = "⏳ 正在生成截圖...";
             
             html2canvas(memePreviewArea, {
                 useCORS: true,
                 allowTaint: true,
-                scale: 2 // 高畫質渲染
+                scale: 2
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'my-meme.png';
