@@ -576,369 +576,196 @@
       <div class="divider"></div>
     </header>
 
-    <main class="card-grid">
-      <!-- Week 1: 鎖定 -->
-      <div class="card locked">
-        <div class="card-header">
-          <span class="week-tag">Week 01</span>
-          <span class="status-badge lock-icon">🔒</span>
-        </div>
-        <h3 class="card-title">HTML / CSS 基礎體驗</h3>
-      </div>
-
-      <!-- Week 2: 鎖定 -->
-      <div class="card locked">
-        <div class="card-header">
-          <span class="week-tag">Week 02</span>
-          <span class="status-badge lock-icon">🔒</span>
-        </div>
-        <h3 class="card-title">JavaScript 基礎語法</h3>
-      </div>
-
-      <!-- Week 3: 已解鎖 (點擊打開 Modal 迷因產生器) -->
-      <div class="card unlocked" onclick="openMemeModal()">
-        <div class="card-header">
-          <span class="week-tag">Week 03</span>
-          <span class="status-badge card-arrow">➔</span>
-        </div>
-        <h3 class="card-title">🤪 搞怪迷因產生器</h3>
-      </div>
-
-      <!-- Week 4: 已解鎖 (點擊切換至留言牆頁面) -->
-      <div class="card unlocked" onclick="switchPage('board-page')">
-        <div class="card-header">
-          <span class="week-tag">Week 04</span>
-          <span class="status-badge card-arrow">➔</span>
-        </div>
-        <h3 class="card-title">悄悄話動態留言牆</h3>
-      </div>
-    </main>
+   <!-- Week 1 (已解鎖) -->
+  <a href="w1/index.html" class="card unlocked">
+  <div class="card-header">
+  <span class="badge">WEEK 01</span>
+  <span class="icon">🚀</span>
   </div>
-
-  <!-- ==========================================
-       Week 4 頁面：悄悄話動態留言牆
-       ========================================== -->
-  <div id="board-page" class="page-container hidden">
-    <header class="board-header">
-      <button class="back-btn" onclick="switchPage('home-page')">← 返回作品集列表</button>
-      <h1 class="board-title">悄悄話動態留言牆</h1>
-      <p class="board-subtitle">傾聽大家留下的心聲與悄悄話</p>
-    </header>
-
-    <div id="loading">
-      <div class="whisper-spinner"></div>
-      <p>正在拉取悄悄話...</p>
+   <div class="card-title">Week 1 - 數位名片</div>
+   <div class="card-footer">
+  <span class="action-text">前往關卡 ➔</span>
+   </div>
+            </a>
+ <!-- Week 2 (已解鎖) -->
+            <a href="w2/index.html" class="card unlocked">
+                <div class="card-header">
+                    <span class="badge">WEEK 02</span>
+                    <span class="icon">🍔</span>
+                </div>
+                <div class="card-title">Week 2 - 今天吃甚麼?</div>
+                <div class="card-footer">
+                    <span class="action-text">前往關卡 ➔</span>
+                </div>
+            </a>
+ <!-- Week 3 (已解鎖) -->
+            <a href="w3/index.html" class="card unlocked">
+                <div class="card-header">
+                    <span class="badge">WEEK 03</span>
+                    <span class="icon">🎭</span>
+                </div>
+                <div class="card-title">Week 3 - 迷因產生器</div>
+                <div class="card-footer">
+                    <span class="action-text">前往關卡 ➔</span>
+                </div>
+            </a>
+<!-- Week 4 (已解鎖) -->
+            <a href="w4/index.html" class="card unlocked">
+                <div class="card-header">
+                    <span class="badge">WEEK 04</span>
+                    <span class="icon">💬</span>
+                </div>
+                <div class="card-title">Week 4 - 悄悄話</div>
+                <div class="card-footer">
+                    <span class="action-text">前往關卡 ➔</span>
+                </div>
+            </a>
+<!-- Week 5 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 05</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+<!-- Week 6 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 06</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+<!-- Week 7 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 07</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+ <!-- Week 8 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 08</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+<!-- Week 9 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 09</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+<!-- Week 10 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 10</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+ <!-- Week 11 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 11</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+            <!-- Week 12 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 12</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+            <!-- Week 13 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 13</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+            <!-- Week 14 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 14</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+            <!-- Week 15 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 15</span>
+                    <span class="icon">🔒</span>
+                </div>
+                <div class="card-title">未解鎖關卡</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+            <!-- Week 16 (未解鎖) -->
+            <div class="card locked" onclick="playLockedEffect(this)">
+                <div class="card-header">
+                    <span class="badge">WEEK 16</span>
+                    <span class="icon">👑</span>
+                </div>
+                <div class="card-title">期末展示 / 未解鎖</div>
+                <div class="card-footer">
+                    <span class="action-text">敬請期待...</span>
+                </div>
+            </div>
+        </main>
+        <!-- 頁尾 -->
+        <footer>
+            <p>© 2026 網頁程式設計作品集入口 | All Rights Reserved.</p>
+        </footer>
     </div>
 
-    <main id="masonry-board" class="masonry-container"></main>
-  </div>
-
-  <!-- ==========================================
-       Week 3 Modal 彈窗：搞怪迷因產生器
-       ========================================== -->
-  <div id="meme-modal" class="modal-overlay">
-    <div class="meme-app-wrapper">
-      <button class="close-btn" onclick="closeMemeModal()">✕</button>
-      
-      <!-- 標題區 -->
-      <div class="text-center mb-6">
-        <div class="inline-block bg-pink-500 text-white px-6 py-2 border-4 border-black rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] -rotate-1 hover-wiggle">
-          <h2 class="text-2xl md:text-4xl font-extrabold tracking-wider flex items-center gap-2">
-            <span>🤪</span> 迷因發射器 Meme Studio <span>🔥</span>
-          </h2>
-        </div>
-      </div>
-
-      <!-- 控制面板與預覽畫布 -->
-      <div class="meme-generator-grid">
-        <!-- 左側：控制台 -->
-        <div class="funky-card p-4 space-y-4 text-left">
-          <h3 class="text-xl font-black border-b-4 border-black pb-2">🛠️ 迷因控制台</h3>
-
-          <!-- 上傳與預設底圖 -->
-          <div>
-            <label class="block font-black text-slate-800 mb-1">1. 選擇底圖 (本機上傳)</label>
-            <input type="file" id="imageInput" accept="image/*" style="display: none;" />
-            <button onclick="document.getElementById('imageInput').click()" class="w-full py-2 px-3 bg-cyan-300 hover:bg-cyan-400 text-black funky-btn rounded-xl text-sm mb-2">
-              📁 上傳你的梗圖照片
-            </button>
-            <div class="flex gap-1 flex-wrap">
-              <span class="text-xs font-bold text-slate-600 w-full mb-1">預設底圖：</span>
-              <button onclick="loadPresetImage('doge')" class="text-xs bg-amber-200 hover:bg-amber-300 px-2 py-1 rounded border-2 border-black font-bold">🐕 柴犬</button>
-              <button onclick="loadPresetImage('cat')" class="text-xs bg-orange-200 hover:bg-orange-300 px-2 py-1 rounded border-2 border-black font-bold">🙀 震驚貓</button>
-              <button onclick="loadPresetImage('success')" class="text-xs bg-emerald-200 hover:bg-emerald-300 px-2 py-1 rounded border-2 border-black font-bold">👶 成功男孩</button>
-            </div>
-          </div>
-
-          <!-- 文字輸入 -->
-          <div class="space-y-2 pt-2 border-t-2 border-slate-200">
-            <label class="block font-black text-slate-800">2. 輸入經典迷因文字</label>
-            <div>
-              <span class="text-xs font-bold text-slate-500">上方文字 (Top Text)</span>
-              <input type="text" id="topTextInput" value="當你寫的 Code" class="w-full p-2 border-2 border-black rounded-lg font-bold">
-            </div>
-            <div>
-              <span class="text-xs font-bold text-slate-500">下方文字 (Bottom Text)</span>
-              <input type="text" id="bottomTextInput" value="一次就通過測試時" class="w-full p-2 border-2 border-black rounded-lg font-bold">
-            </div>
-          </div>
-
-          <!-- 微調控制 -->
-          <div class="space-y-2 pt-2 border-t-2 border-slate-200 text-xs">
-            <label class="block font-black text-slate-800 text-sm">3. 樣式微調</label>
-            <div>
-              <div class="flex justify-between font-bold">
-                <span>🔤 字體大小</span>
-                <span id="fontSizeVal">36px</span>
-              </div>
-              <input type="range" id="fontSizeSlider" min="20" max="80" value="36" class="w-full">
-            </div>
-            <div>
-              <div class="flex justify-between font-bold">
-                <span>⬆️ 上方文字高度</span>
-                <span id="topPosVal">5%</span>
-              </div>
-              <input type="range" id="topPosSlider" min="0" max="40" value="5" class="w-full">
-            </div>
-            <div>
-              <div class="flex justify-between font-bold">
-                <span>⬇️ 下方文字高度</span>
-                <span id="bottomPosVal">5%</span>
-              </div>
-              <input type="range" id="bottomPosSlider" min="0" max="40" value="5" class="w-full">
-            </div>
-            <div class="flex items-center gap-2 pt-1">
-              <label for="textColorPicker" class="font-bold">🎨 文字顏色：</label>
-              <input type="color" id="textColorPicker" value="#ffffff" class="w-8 h-8 border border-black rounded cursor-pointer">
-            </div>
-          </div>
-
-          <!-- 按鈕 -->
-          <div class="pt-2 border-t-2 border-black space-y-2">
-            <button id="downloadBtn" class="w-full py-3 bg-emerald-400 hover:bg-emerald-300 text-black text-lg funky-btn rounded-xl flex items-center justify-center gap-2 hover-wiggle">
-              🚀 一鍵打包下載迷因
-            </button>
-            <button id="resetBtn" class="w-full py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded border-2 border-black">
-              🔄 重置為預設設定
-            </button>
-          </div>
-        </div>
-
-        <!-- 右側：即時預覽區 -->
-        <div class="funky-card p-4 bg-slate-900 text-white flex flex-col items-center justify-center">
-          <div class="w-full flex justify-between items-center mb-2">
-            <h3 class="text-lg font-black text-yellow-400">👁️ 即時預覽畫布</h3>
-          </div>
-          <div id="memeContainer" class="relative inline-block max-w-full overflow-hidden select-none bg-slate-800 rounded-lg border-4 border-black">
-            <img id="memeImage" src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800&auto=format&fit=crop&q=80" alt="Meme Canvas" style="max-height: 400px;" class="block w-auto object-contain mx-auto pointer-events-none" crossorigin="anonymous">
-            <div id="topTextDisplay" class="meme-text absolute left-0 right-0 text-center px-4 leading-tight text-white pointer-events-none uppercase">
-              當你寫的 CODE
-            </div>
-            <div id="bottomTextDisplay" class="meme-text absolute left-0 right-0 text-center px-4 leading-tight text-white pointer-events-none uppercase">
-              一次就通過測試時
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    /* ==========================================
-     * 1. 頁面切換邏輯
-     * ========================================== */
-    function switchPage(pageId) {
-      document.querySelectorAll('.page-container').forEach(page => {
-        page.classList.add('hidden');
-      });
-      document.getElementById(pageId).classList.remove('hidden');
-
-      if (pageId === 'board-page') {
-        loadBoardData();
-      }
-    }
-
-    /* ==========================================
-     * 2. Modal 彈窗開關控制 (Week 3 迷因產生器)
-     * ========================================== */
-    function openMemeModal() {
-      document.getElementById('meme-modal').classList.add('active');
-    }
-
-    function closeMemeModal() {
-      document.getElementById('meme-modal').classList.remove('active');
-    }
-
-    /* ==========================================
-     * 3. Week 4 留言牆數據載入邏輯
-     * ========================================== */
-    function loadBoardData() {
-      const board = document.getElementById('masonry-board');
-      const loading = document.getElementById('loading');
-
-      // 避免重複發送請求
-      if (board.children.length > 0) return;
-
-      fetch('https://jsonplaceholder.typicode.com/comments?_limit=15')
-        .then(response => response.json())
-        .then(data => {
-          loading.style.display = 'none';
-          board.style.display = 'block';
-
-          data.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'msg-card';
-            card.innerHTML = `
-              <div class="msg-header">
-                <span class="msg-author">${item.name.split(' ')[0]}</span>
-                <span class="msg-time">熱門留言</span>
-              </div>
-              <p class="msg-content">${item.body}</p>
-            `;
-
-            card.addEventListener('click', () => {
-              document.querySelectorAll('.msg-card').forEach(c => c.classList.remove('is-highlighted'));
-              card.classList.add('is-highlighted');
-              board.classList.add('has-active');
-            });
-
-            board.appendChild(card);
-          });
-        })
-        .catch(err => {
-          loading.innerHTML = '<p style="color:red;">載入失敗，請稍後再試。</p>';
-        });
-    }
-
-    // 點擊空白處取消留言卡片高亮
-    document.addEventListener('click', (e) => {
-      const board = document.getElementById('masonry-board');
-      if (board && !e.target.closest('.msg-card')) {
-        document.querySelectorAll('.msg-card').forEach(c => c.classList.remove('is-highlighted'));
-        board.classList.remove('has-active');
-      }
-    });
-
-    /* ==========================================
-     * 4. Week 3 迷因產生器核心 Logic
-     * ========================================== */
-    const imageInput = document.getElementById('imageInput');
-    const memeImage = document.getElementById('memeImage');
-    const memeContainer = document.getElementById('memeContainer');
-
-    const topTextInput = document.getElementById('topTextInput');
-    const bottomTextInput = document.getElementById('bottomTextInput');
-    const topTextDisplay = document.getElementById('topTextDisplay');
-    const bottomTextDisplay = document.getElementById('bottomTextDisplay');
-
-    const fontSizeSlider = document.getElementById('fontSizeSlider');
-    const topPosSlider = document.getElementById('topPosSlider');
-    const bottomPosSlider = document.getElementById('bottomPosSlider');
-    const textColorPicker = document.getElementById('textColorPicker');
-
-    const fontSizeVal = document.getElementById('fontSizeVal');
-    const topPosVal = document.getElementById('topPosVal');
-    const bottomPosVal = document.getElementById('bottomPosVal');
-
-    const downloadBtn = document.getElementById('downloadBtn');
-    const resetBtn = document.getElementById('resetBtn');
-
-    imageInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          memeImage.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    function loadPresetImage(type) {
-      const presets = {
-        'doge': 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&auto=format&fit=crop&q=80',
-        'cat': 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800&auto=format&fit=crop&q=80',
-        'success': 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=800&auto=format&fit=crop&q=80'
-      };
-      if (presets[type]) {
-        memeImage.src = presets[type];
-      }
-    }
-
-    function updateMemeText() {
-      topTextDisplay.textContent = topTextInput.value || '';
-      bottomTextDisplay.textContent = bottomTextInput.value || '';
-
-      const fontSize = fontSizeSlider.value;
-      topTextDisplay.style.fontSize = `${fontSize}px`;
-      bottomTextDisplay.style.fontSize = `${fontSize}px`;
-      fontSizeVal.textContent = `${fontSize}px`;
-
-      const topPos = topPosSlider.value;
-      topTextDisplay.style.top = `${topPos}%`;
-      topPosVal.textContent = `${topPos}%`;
-
-      const bottomPos = bottomPosSlider.value;
-      bottomTextDisplay.style.bottom = `${bottomPos}%`;
-      bottomPosVal.textContent = `${bottomPos}%`;
-
-      const color = textColorPicker.value;
-      topTextDisplay.style.color = color;
-      bottomTextDisplay.style.color = color;
-    }
-
-    topTextInput.addEventListener('input', updateMemeText);
-    bottomTextInput.addEventListener('input', updateMemeText);
-    fontSizeSlider.addEventListener('input', updateMemeText);
-    topPosSlider.addEventListener('input', updateMemeText);
-    bottomPosSlider.addEventListener('input', updateMemeText);
-    textColorPicker.addEventListener('input', updateMemeText);
-
-    downloadBtn.addEventListener('click', function() {
-      const originalText = downloadBtn.innerHTML;
-      downloadBtn.innerHTML = '⏳ 生成中...';
-      downloadBtn.disabled = true;
-
-      html2canvas(memeContainer, {
-        useCORS: true,
-        scale: 2,
-        backgroundColor: null
-      }).then(canvas => {
-        const imageUrl = canvas.toDataURL('image/png');
-        const downloadLink = document.createElement('a');
-        downloadLink.href = imageUrl;
-        downloadLink.download = 'my-meme.png';
-
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-
-        downloadBtn.innerHTML = '✅ 下載成功！';
-        setTimeout(() => {
-          downloadBtn.innerHTML = originalText;
-          downloadBtn.disabled = false;
-        }, 2000);
-      }).catch(err => {
-        console.error('截圖失敗：', err);
-        alert('生成失敗，請確認圖片已順利載入！');
-        downloadBtn.innerHTML = originalText;
-        downloadBtn.disabled = false;
-      });
-    });
-
-    resetBtn.addEventListener('click', function() {
-      topTextInput.value = '當你寫的 CODE';
-      bottomTextInput.value = '一次就通過測試時';
-      fontSizeSlider.value = 36;
-      topPosSlider.value = 5;
-      bottomPosSlider.value = 5;
-      textColorPicker.value = '#ffffff';
-      updateMemeText();
-    });
-
-    window.onload = function() {
-      updateMemeText();
-    };
-  </script>
+    <!-- 點擊未解鎖卡片時的小互動腳本 -->
+    <script>
+        function playLockedEffect(element) {
+            element.classList.remove('shake-anim');
+            void element.offsetWidth;
+            element.classList.add('shake-anim');
+        }
+    </script>
 </body>
 </html>
