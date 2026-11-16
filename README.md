@@ -3,242 +3,513 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的網頁作品集</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            serif: ['"Noto Serif TC"', 'serif'],
-            sans: ['"Plus Jakarta Sans"', '-apple-system', 'sans-serif'],
-          }
-        }
+  <title>作品集展示與迷因產生器</title>
+
+  <!-- 引入 Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@600;700&family=Inter:wght@300;400;500;600;800&family=Noto+Sans+TC:wght@500;700;900&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- 引入 html2canvas 截圖下載 CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    /* --------------------------------------------------
+     * 1. 全局樣式與變數定義 (莫蘭迪文青色調)
+     * -------------------------------------------------- */
+    :root {
+      --bg-color: #f7f5f0;           /* 柔和米白紙張背景 */
+      --card-bg: #ffffff;            /* 卡片純白背景 */
+      --text-main: #3d405b;          /* 深莫蘭迪藍灰 (主文字) */
+      --text-sub: #8d99ae;           /* 靜謐灰藍 (次要文字) */
+      --accent-color: #e07a5f;       /* 溫暖暖橙 (點綴色) */
+      --accent-hover: #d1684e;       /* 懸停點綴色 */
+      --locked-bg: #eceae4;          /* 鎖定狀態卡片背景 */
+      --locked-text: #a0a5aa;        /* 鎖定狀態文字 */
+      --border-color: #e2dfd7;       /* 柔和邊框 */
+      --shadow-soft: 0 10px 30px rgba(61, 64, 91, 0.05);
+      --shadow-hover: 0 15px 35px rgba(61, 64, 91, 0.12);
+
+      --highlight-glow: rgba(224, 122, 95, 0.4); 
+      --highlight-border: #e07a5f;
+      --highlight-bg: #fffbf7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Serif TC', 'Inter', serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 3rem 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(var(--border-color) 1px, transparent 0);
+      background-size: 28px 28px;
+      opacity: 0.4;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* --------------------------------------------------
+     * 2. 主要頁面容器與切換動畫
+     * -------------------------------------------------- */
+    .page-container {
+      max-width: 1080px;
+      width: 100%;
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .page-container.hidden {
+      display: none;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
-  </script>
-</head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen selection:bg-indigo-100 selection:text-indigo-700">
 
-  <!-- Header -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-    <div class="max-w-5xl mx-auto px-6 py-5 flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-serif font-bold text-xl shadow-md">
-          W
+    /* --------------------------------------------------
+     * 3. 個人資訊 Header 區塊
+     * -------------------------------------------------- */
+    .profile-section {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 1.2rem;
+    }
+
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--card-bg);
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .avatar-wrapper:hover .avatar {
+      transform: scale(1.05) rotate(2deg);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .avatar-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px dashed var(--accent-color);
+      opacity: 0.6;
+      animation: spin 25s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .profile-name {
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-bio {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      font-weight: 300;
+      letter-spacing: 1px;
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .divider {
+      width: 40px;
+      height: 2px;
+      background-color: var(--accent-color);
+      margin: 1.2rem auto 0;
+      border-radius: 2px;
+      opacity: 0.7;
+    }
+
+    /* --------------------------------------------------
+     * 4. 作品卡片網格系統 (RWD)
+     * -------------------------------------------------- */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 960px) {
+      .card-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 680px) {
+      .card-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    }
+    @media (max-width: 420px) {
+      .card-grid { grid-template-columns: 1fr; }
+    }
+
+    /* --------------------------------------------------
+     * 5. 作品卡片樣式
+     * -------------------------------------------------- */
+    .card {
+      position: relative;
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem 1.2rem;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 130px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-soft);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-sub);
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    .card-footer {
+      margin-top: 0.8rem;
+      font-size: 0.85rem;
+    }
+
+    .card.unlocked {
+      border-left: 4px solid var(--accent-color);
+      cursor: pointer;
+    }
+
+    .card.unlocked .badge {
+      color: var(--accent-color);
+    }
+
+    .card.unlocked::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      transition: 0.6s;
+    }
+
+    .card.unlocked:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--accent-color);
+    }
+
+    .card.unlocked:hover::before {
+      left: 100%;
+    }
+
+    .card.unlocked .action-text {
+      color: var(--accent-color);
+      font-weight: 500;
+    }
+
+    .card.locked {
+      background-color: var(--locked-bg);
+      border-color: var(--border-color);
+      cursor: not-allowed;
+      opacity: 0.75;
+    }
+
+    .card.locked .card-title,
+    .card.locked .action-text {
+      color: var(--locked-text);
+      font-weight: 400;
+    }
+
+    .card.locked .badge {
+      color: var(--locked-text);
+      opacity: 0.7;
+    }
+
+    .card.locked:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    .shake-anim {
+      animation: lockShake 0.35s ease-in-out;
+    }
+
+    @keyframes lockShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3.5rem;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       主入口頁面 (Week 作品選單)
+       ========================================== -->
+  <div id="home-page" class="page-container">
+    <header class="profile-section">
+      <div class="avatar-wrapper">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="個人頭像" class="avatar">
+      </div>
+      <h1 class="profile-name">我的前端作品集</h1>
+      <p class="profile-bio">探索每週學習成果與互動網頁實作專案</p>
+      <div class="divider"></div>
+    </header>
+
+  <main class="card-grid">
+      <!-- Week 1 (已解鎖) -->
+      <a href="w1/index.html" class="card unlocked">
+        <div class="card-header">
+          <span class="badge">WEEK 01</span>
+          <span class="icon">🚀</span>
         </div>
-        <div>
-          <h1 class="font-serif font-bold text-xl text-slate-900 tracking-wide">網頁設計作品集</h1>
-          <p class="text-xs text-slate-500">Web Design Portfolio</p>
+        <div class="card-title">Week 1 - 數位名片</div>
+        <div class="card-footer">
+          <span class="action-text">前往關卡 ➔</span>
+        </div>
+      </a>
+ <!-- Week 2 (已解鎖) -->
+      <a href="w2/index.html" class="card unlocked">
+        <div class="card-header">
+          <span class="badge">WEEK 02</span>
+          <span class="icon">🍔</span>
+        </div>
+        <div class="card-title">Week 2 - 今天吃甚麼?</div>
+        <div class="card-footer">
+          <span class="action-text">前往關卡 ➔</span>
+        </div>
+      </a>
+      <!-- Week 3 (已解鎖) -->
+      <a href="w3/index.html" class="card unlocked">
+        <div class="card-header">
+          <span class="badge">WEEK 03</span>
+          <span class="icon">🎭</span>
+        </div>
+        <div class="card-title">Week 3 - 迷因產生器</div>
+        <div class="card-footer">
+          <span class="action-text">前往關卡 ➔</span>
+        </div>
+      </a>
+      <!-- Week 4 (已解鎖) -->
+      <a href="w4/index.html" class="card unlocked">
+        <div class="card-header">
+          <span class="badge">WEEK 04</span>
+          <span class="icon">💬</span>
+        </div>
+        <div class="card-title">Week 4 - 悄悄話</div>
+        <div class="card-footer">
+          <span class="action-text">前往關卡 ➔</span>
+        </div>
+      </a>
+      <!-- Week 5 (已解鎖) -->
+      <a href="w5/index.html" class="card unlocked">
+        <div class="card-header">
+          <span class="badge">WEEK 05</span>
+          <span class="icon">🔮</span>
+        </div>
+        <div class="card-title">Week 5 - 雲端心電感應</div>
+        <div class="card-footer">
+          <span class="action-text">前往關卡 ➔</span>
+        </div>
+      </a>
+      <!-- Week 6 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 06</span>
+          <span class="icon">🔒</span>
+        </div>
+        <div class="card-title">未解鎖關卡</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
         </div>
       </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="max-w-5xl mx-auto px-6 py-12">
-    
-    <div class="mb-10 text-center">
-      <h2 class="font-serif text-3xl font-bold text-slate-900 mb-3">課堂作業展示</h2>
-      <p class="text-slate-500 text-sm">點擊下方各作業卡片，即可進入瀏覽對應的網頁作品。</p>
-    </div>
-
-    <!-- 作業列表 Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
- <!-- 作業一 -->
- <a href="w1/index.html" class="group block bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 hover:-translate-y-1">
-        <div class="flex justify-between items-start mb-4">
-          <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg group-hover:bg-indigo-100 group-hover:text-indigo-700 transition-colors">Week 1</span>
+      <!-- Week 7 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 07</span>
+          <span class="icon">🔒</span>
         </div>
-        <h3 class="font-serif text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">作業一</h3>
-        <p class="text-sm text-slate-500 line-clamp-2">基礎網頁建置與個人介紹頁面。</p>
-      </a>
-      <!-- 作業二 -->
-   <a href="w2/index.html" class="group block bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 hover:-translate-y-1">
-        <div class="flex justify-between items-start mb-4">
-          <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg group-hover:bg-indigo-100 group-hover:text-indigo-700 transition-colors">Week 2</span>
+        <div class="card-title">未解鎖關卡</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
         </div>
-        <h3 class="font-serif text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">作業二</h3>
-        <p class="text-sm text-slate-500 line-clamp-2">CSS 樣式設計與排版練習。</p>
-      </a>
-
-   <!-- 作業三 -->
-  <a href="w3/index.html" class="group block bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 hover:-translate-y-1">
-        <div class="flex justify-between items-start mb-4">
-          <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg group-hover:bg-indigo-100 group-hover:text-indigo-700 transition-colors">Week 3</span>
+      </div>
+      <!-- Week 8 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 08</span>
+          <span class="icon">🔒</span>
         </div>
-        <h3 class="font-serif text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">作業三</h3>
-        <p class="text-sm text-slate-500 line-clamp-2">RWD 響應式網頁設計實作。</p>
-      </a>
- <!-- 作業四 -->
-      <a href="w4/index.html" class="group block bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 hover:-translate-y-1">
-        <div class="flex justify-between items-start mb-4">
-          <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg group-hover:bg-indigo-100 group-hover:text-indigo-700 transition-colors">Week 4</span>
+        <div class="card-title">未解鎖關卡</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
         </div>
-        <h3 class="font-serif text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">作業四</h3>
-        <p class="text-sm text-slate-500 line-clamp-2">JavaScript 互動功能與動態效果。</p>
-      </a>
-<!-- 作業五 (本次新增) -->
-      <a href="w5/index.html" class="group block bg-gradient-to-br from-white to-orange-50/50 rounded-2xl p-6 border border-orange-200 shadow-md hover:shadow-xl hover:border-orange-300 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
-        <!-- 裝飾用背景光暈 -->
-        <div class="absolute -right-6 -top-6 w-24 h-24 bg-orange-200 rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
-        
-  <div class="flex justify-between items-start mb-4 relative z-10">
-          <span class="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-lg shadow-sm">Week 5</span>
-          <span class="flex h-3 w-3 relative">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
-          </span>
+      </div>
+      <!-- Week 9 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 09</span>
+          <span class="icon">🔒</span>
         </div>
-        <h3 class="font-serif text-xl font-bold text-slate-900 mb-2 group-hover:text-orange-700 transition-colors relative z-10">作業五：雲端心電感應</h3>
-        <p class="text-sm text-slate-600 line-clamp-2 relative z-10">多人同步互動遊戲，結合 3D 翻牌特效與實時狀態同步。</p>
-      </a>
+        <div class="card-title">未解鎖關卡</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
+        </div>
+      </div>
+      <!-- Week 10 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 10</span>
+          <span class="icon">🔒</span>
+        </div>
+        <div class="card-title">未解鎖關卡</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
+        </div>
+      </div>
+      <!-- Week 11 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 11</span>
+          <span class="icon">🔒</span>
+        </div>
+        <div class="card-title">未解鎖關卡</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
+        </div>
+      </div>
+      <!-- Week 12 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 12</span>
+          <span class="icon">🔒</span>
+        </div>
+        <div class="card-title">未解鎖關卡</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
+        </div>
+      </div>
+ <!-- Week 13 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 13</span>
+          <span class="icon">🔒</span>
+        </div>
+        <div class="card-title">未解鎖關卡</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
+        </div>
+      </div>
+      <!-- Week 14 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 14</span>
+          <span class="icon">🔒</span>
+        </div>
+        <div class="card-title">未解鎖關卡</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
+        </div>
+      </div>
+      <!-- Week 15 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 15</span>
+          <span class="icon">🔒</span>
+        </div>
+        <div class="card-title">未解鎖關卡</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
+        </div>
+      </div>
+      <!-- Week 16 (未解鎖) -->
+      <div class="card locked" onclick="playLockedEffect(this)">
+        <div class="card-header">
+          <span class="badge">WEEK 16</span>
+          <span class="icon">👑</span>
+        </div>
+        <div class="card-title">期末展示 / 未解鎖</div>
+        <div class="card-footer">
+          <span class="action-text">敬請期待...</span>
+        </div>
+      </div>
+    </main>
+    <!-- 頁尾 -->
+    <footer>
+      <p>© 2026 網頁程式設計作品集入口 | All Rights Reserved.</p>
+    </footer>
+  </div>
 
-    </div>
-  </main>
-
-  <footer class="border-t border-slate-200 mt-auto py-6 text-center text-sm text-slate-400">
-    &copy; 2026 Web Design Portfolio. All rights reserved.
-  </footer>
-
-</body>
-</html>
-<!-- Week 6 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 06</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
-<!-- Week 7 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 07</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
- <!-- Week 8 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 08</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
-<!-- Week 9 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 09</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
-<!-- Week 10 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 10</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
- <!-- Week 11 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 11</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
-            <!-- Week 12 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 12</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
-            <!-- Week 13 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 13</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
-            <!-- Week 14 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 14</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
-            <!-- Week 15 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 15</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
-            <!-- Week 16 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 16</span>
-                    <span class="icon">👑</span>
-                </div>
-                <div class="card-title">期末展示 / 未解鎖</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
-        </main>
-        <!-- 頁尾 -->
-        <footer>
-            <p>© 2026 網頁程式設計作品集入口 | All Rights Reserved.</p>
-        </footer>
-    </div>
-
-    <!-- 點擊未解鎖卡片時的小互動腳本 -->
-    <script>
-        function playLockedEffect(element) {
-            element.classList.remove('shake-anim');
-            void element.offsetWidth;
-            element.classList.add('shake-anim');
-        }
-    </script>
+  <!-- 點擊未解鎖卡片時的小互動腳本 -->
+  <script>
+    function playLockedEffect(element) {
+      element.classList.remove('shake-anim');
+      void element.offsetWidth;
+      element.classList.add('shake-anim');
+    }
+  </script>
 </body>
 </html>
