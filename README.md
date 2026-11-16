@@ -620,17 +620,17 @@
                     <span class="action-text">前往關卡 ➔</span>
                 </div>
             </a>
-<!-- Week 5 (未解鎖) -->
-            <div class="card locked" onclick="playLockedEffect(this)">
-                <div class="card-header">
-                    <span class="badge">WEEK 05</span>
-                    <span class="icon">🔒</span>
-                </div>
-                <div class="card-title">未解鎖關卡</div>
-                <div class="card-footer">
-                    <span class="action-text">敬請期待...</span>
-                </div>
-            </div>
+<!-- Week 5 (已解鎖) -->
+<a href="week5.html" class="card unlocked">
+    <div class="card-header">
+        <span class="badge">WEEK 05</span>
+        <span class="icon">✨</span>
+    </div>
+    <div class="card-title">雲端心電感應</div>
+    <div class="card-footer">
+        <span class="action-text">進入遊戲 →</span>
+    </div>
+</a>
 <!-- Week 6 (未解鎖) -->
             <div class="card locked" onclick="playLockedEffect(this)">
                 <div class="card-header">
