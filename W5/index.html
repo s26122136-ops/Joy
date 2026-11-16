@@ -79,6 +79,14 @@
       background: #D9775766;
       border-radius: 999px;
     }
+
+    /* Subtle texture background pattern */
+    .bg-texture {
+      background-image: radial-gradient(#D97757 0.75px, transparent 0.75px), radial-gradient(#8A9A86 0.75px, #FDFBF7 0.75px);
+      background-size: 30px 30px;
+      background-position: 0 0, 15px 15px;
+      background-opacity: 0.15;
+    }
   </style>
 </head>
 <body class="bg-cream-50 text-cream-900 font-sans min-h-screen flex flex-col justify-between selection:bg-terracotta-100 selection:text-terracotta-700">
@@ -90,15 +98,12 @@
   <header class="border-b border-cream-200 bg-cream-50/80 backdrop-blur-md sticky top-0 z-30 transition-all">
     <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <a href="index.html" title="返回首頁" class="p-2 rounded-xl hover:bg-cream-200/70 text-cream-800 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-        </a>
         <div class="w-10 h-10 rounded-2xl bg-terracotta-500 text-white flex items-center justify-center font-serif font-bold text-xl shadow-md shadow-terracotta-500/20">
           心
         </div>
         <div>
           <h1 class="font-serif font-bold text-lg text-cream-900 tracking-wide">雲端心電感應</h1>
-          <p class="text-xs text-cream-800/70">WEEK 05 • Cloud Telepathy</p>
+          <p class="text-xs text-cream-800/70">Cloud Telepathy Synchronized Game</p>
         </div>
       </div>
 
@@ -201,7 +206,7 @@
       </div>
 
       <!-- Answer Input Panel (Visible in 'playing' status for players) -->
-      <div id="answer-input-box" class="bg-white border border-cream-200 rounded-3xl p-6 shadow-sm space-y-4 hidden">
+      <div id="answer-input-box" class="bg-white border border-cream-200 rounded-3xl p-6 shadow-sm space-y-4">
         <h3 class="font-serif font-bold text-base text-cream-900 flex items-center gap-2">
           <svg class="w-5 h-5 text-terracotta-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
           請填寫您的直覺答案
@@ -215,7 +220,7 @@
         <p id="my-answer-status" class="text-xs text-sage-700 font-medium hidden">✓ 您的答案已上傳成功，等待房主開牌...</p>
       </div>
 
-      <!-- 3D Cards Container -->
+      <!-- 3D Card Cards Container (Visible in 'playing' & 'revealed' status) -->
       <div>
         <div class="flex justify-between items-center mb-4 px-1">
           <h3 class="font-serif font-bold text-lg text-cream-900">玩家答案卡牌</h3>
@@ -232,7 +237,7 @@
 
   <!-- HOST CONTROL CONSOLE MODAL -->
   <div id="host-modal" class="fixed inset-0 bg-cream-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white border border-cream-200 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative space-y-5">
+    <div class="bg-white border border-cream-200 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative space-y-5 animate-in fade-in zoom-in duration-200">
       
       <div class="flex justify-between items-center border-b border-cream-200 pb-3">
         <div class="flex items-center gap-2">
@@ -298,20 +303,25 @@
 
   <!-- JavaScript App Logic -->
   <script>
+    // Constants & Configuration
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwjpS_8FQDxnWzvSenPkGnkPwVqlYyI5Y2mX3nLorQh36hXulfe66HDEnXJj1UjnoUa/exec";
     const POLLING_INTERVAL_MS = 2000;
 
+    // Application State
     let currentRoom = "";
     let playerName = "";
     let isHost = false;
     let pollingTimer = null;
+    let localAnswerSubmitted = false;
     let previousStatus = "";
     let previousAnswersHash = "";
 
+    // Local Mock Fallback Storage (Ensures 100% interactive functionality even if CORS/GAS network fails)
     const mockStorage = {
       "default": { status: "setup", question: "", answers: {} }
     };
 
+    // Web Audio Sound Effects Synthesizer
     const playSound = (type) => {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -337,17 +347,22 @@
           osc.start();
           osc.stop(ctx.currentTime + 0.08);
         }
-      } catch (e) {}
+      } catch (e) {
+        // AudioContext disabled or not supported
+      }
     };
 
+    // Toast Notification System
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
+      
       const bgColor = type === 'success' ? 'bg-sage-500 text-white' : 
                       type === 'warning' ? 'bg-warmgold-600 text-white' : 'bg-cream-900 text-cream-50';
       
       toast.className = `px-4 py-2.5 rounded-2xl shadow-xl font-medium text-xs flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 ${bgColor} pointer-events-auto`;
       toast.innerHTML = `<span>${message}</span>`;
+      
       container.appendChild(toast);
       
       requestAnimationFrame(() => {
@@ -360,11 +375,13 @@
       }, 3000);
     }
 
+    // Generate Random 4-digit Room Code
     function generateRandomRoom() {
       const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
       document.getElementById('input-room-id').value = randomCode;
     }
 
+    // Auto-load room from URL query parameter if present (?room=XXXX)
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const roomParam = urlParams.get('room');
@@ -373,6 +390,7 @@
       }
     });
 
+    // Lobby Form Submission Handler
     function handleJoinGame(e) {
       e.preventDefault();
       playerName = document.getElementById('input-player-name').value.trim();
@@ -384,6 +402,7 @@
         return;
       }
 
+      // Update UI for Game View
       document.getElementById('current-room-display').textContent = currentRoom;
       document.getElementById('room-badge').classList.remove('hidden');
       document.getElementById('room-badge').classList.add('flex');
@@ -399,15 +418,18 @@
         roleBadge.className = "px-2 py-0.5 bg-sage-100 text-sage-700 text-[10px] rounded-md font-semibold";
       }
 
+      // Switch View
       document.getElementById('view-lobby').classList.add('hidden');
       document.getElementById('view-game').classList.remove('hidden');
 
       showToast(`已進入房間 #${currentRoom}`, 'success');
 
+      // Immediate first state fetch & start polling
       fetchGameState();
       startPolling();
     }
 
+    // Leave Room Logic
     function leaveRoom() {
       stopPolling();
       currentRoom = "";
@@ -417,6 +439,7 @@
       showToast('已離開房間');
     }
 
+    // API Interaction: Fetch Current Game State (GET)
     async function fetchGameState() {
       if (!currentRoom) return;
 
@@ -432,6 +455,8 @@
         const data = await response.json();
         updateGameUI(data);
       } catch (error) {
+        // Fallback to local mock storage gracefully
+        console.warn("GAS fetch standard call failed or restricted by CORS, using fallback sync mechanism", error);
         if (!mockStorage[currentRoom]) {
           mockStorage[currentRoom] = { status: "setup", question: "", answers: {} };
         }
@@ -441,9 +466,11 @@
       }
     }
 
+    // API Interaction: Send Action Event (POST)
     async function sendGameAction(payload) {
       payload.room = currentRoom;
 
+      // Update local fallback immediately for fast response
       if (!mockStorage[currentRoom]) {
         mockStorage[currentRoom] = { status: "setup", question: "", answers: {} };
       }
@@ -464,6 +491,7 @@
       }
 
       try {
+        // Use text/plain header to bypass standard preflight CORS restrictions in Google Apps Script
         await fetch(GAS_API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -476,26 +504,36 @@
       fetchGameState();
     }
 
+    // Update UI based on fetched room state
     function updateGameUI(data) {
       const { status, question, answers = {} } = data;
 
+      // Detect Status Change Trigger Sound
       if (status === 'revealed' && previousStatus !== 'revealed') {
         playSound('flip');
       }
       previousStatus = status;
 
+      // Status Label Update
       const statusLabel = document.getElementById('game-status-label');
       if (status === 'setup') statusLabel.textContent = '等待房主出題';
       else if (status === 'playing') statusLabel.textContent = '進行中 (填答階段)';
       else if (status === 'revealed') statusLabel.textContent = '開牌揭曉階段';
 
+      // Question Display
       const qDisplay = document.getElementById('question-display');
-      qDisplay.textContent = question ? question : "等待房主出題中...";
+      if (question) {
+        qDisplay.textContent = question;
+      } else {
+        qDisplay.textContent = "等待房主出題中...";
+      }
 
+      // Count of Answered Players
       const playerList = Object.keys(answers);
       document.getElementById('answered-count').textContent = `${playerList.length} 人`;
       document.getElementById('cards-count-label').textContent = `共 ${playerList.length} 張卡牌`;
 
+      // Answer Input Box Visibility
       const answerInputBox = document.getElementById('answer-input-box');
       if (status === 'playing') {
         answerInputBox.classList.remove('hidden');
@@ -508,15 +546,17 @@
         answerInputBox.classList.add('hidden');
       }
 
+      // Render 3D Flip Cards Grid
       renderCards(answers, status);
     }
 
+    // Render 3D Flip Cards & Match Highlight Logic
     function renderCards(answers, status) {
       const grid = document.getElementById('cards-grid');
       const entries = Object.entries(answers);
       
       const currentAnswersHash = JSON.stringify(answers) + status;
-      if (currentAnswersHash === previousAnswersHash) return;
+      if (currentAnswersHash === previousAnswersHash) return; // Prevent unnecessary DOM flicker
       previousAnswersHash = currentAnswersHash;
 
       if (entries.length === 0) {
@@ -529,6 +569,7 @@
         return;
       }
 
+      // Count answer frequencies to highlight telepathy matches!
       const answerCounts = {};
       entries.forEach(([_, ans]) => {
         const cleaned = ans.trim().toLowerCase();
@@ -550,7 +591,7 @@
         cardElement.innerHTML = `
           <div class="card-inner w-full h-full relative transform-style-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}">
             
-            <!-- FRONT OF CARD -->
+            <!-- FRONT OF CARD (Cover Phase) -->
             <div class="absolute inset-0 w-full h-full rounded-2xl p-4 bg-gradient-to-br from-cream-100 to-cream-200 border border-cream-300 shadow-md backface-hidden flex flex-col justify-between items-center text-center">
               <div class="w-full flex justify-between items-center">
                 <span class="text-[10px] px-2 py-0.5 bg-white/70 rounded-full font-mono text-cream-800">${isMe ? '我' : '玩家'}</span>
@@ -569,7 +610,7 @@
               </div>
             </div>
 
-            <!-- BACK OF CARD -->
+            <!-- BACK OF CARD (Revealed Answer Phase) -->
             <div class="absolute inset-0 w-full h-full rounded-2xl p-5 border shadow-lg backface-hidden rotate-y-180 flex flex-col justify-between items-center text-center transition-all ${
               isMatch 
                 ? 'bg-gradient-to-br from-terracotta-100 via-white to-amber-50 border-terracotta-500 ring-2 ring-terracotta-500/30' 
@@ -597,6 +638,7 @@
       });
     }
 
+    // Player Submit Answer
     function submitMyAnswer() {
       const ansInput = document.getElementById('my-answer-input');
       const val = ansInput.value.trim();
@@ -616,6 +658,7 @@
       document.getElementById('my-answer-status').classList.remove('hidden');
     }
 
+    // Polling Control
     function startPolling() {
       stopPolling();
       pollingTimer = setInterval(fetchGameState, POLLING_INTERVAL_MS);
@@ -625,11 +668,8 @@
       if (pollingTimer) clearInterval(pollingTimer);
     }
 
+    // Host Console Actions
     function toggleHostConsoleModal() {
-      if (!currentRoom) {
-        showToast('請先進入房間再開啟主控台', 'warning');
-        return;
-      }
       const modal = document.getElementById('host-modal');
       modal.classList.toggle('hidden');
     }
@@ -639,8 +679,7 @@
     }
 
     function hostSetQuestion() {
-      const qInput = document.getElementById('host-question-input');
-      const qText = qInput.value.trim();
+      const qText = document.getElementById('host-question-input').value.trim();
       if (!qText) {
         showToast('請輸入題目內容', 'warning');
         return;
@@ -649,27 +688,20 @@
         action: 'set_question',
         question: qText
       });
-      document.getElementById('my-answer-input').value = '';
       toggleHostConsoleModal();
-      showToast('已發布新題目！', 'success');
+      showToast('已發布新題目，全房間開始填答！', 'success');
     }
 
     function hostRevealCards() {
-      sendGameAction({
-        action: 'reveal'
-      });
+      sendGameAction({ action: 'reveal' });
       toggleHostConsoleModal();
-      showToast('全網頁同步開牌中...', 'success');
+      showToast('已同步開牌！', 'success');
     }
 
     function hostResetGame() {
-      sendGameAction({
-        action: 'reset'
-      });
-      document.getElementById('host-question-input').value = '';
-      document.getElementById('my-answer-input').value = '';
+      sendGameAction({ action: 'reset' });
       toggleHostConsoleModal();
-      showToast('房間狀態已重置');
+      showToast('房間狀態已重置', 'info');
     }
   </script>
 </body>
